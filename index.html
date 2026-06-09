@@ -20,10 +20,8 @@
             align-items: center;
             font-family: 'Segoe UI', 'Courier New', monospace;
             padding: 20px;
-            transition: all 0.3s;
         }
 
-        /* Contenedor principal */
         .game-wrapper {
             background: #2e2b26;
             border-radius: 48px;
@@ -32,7 +30,6 @@
             display: inline-block;
         }
 
-        /* Canvas: área de juego */
         .canvas-container {
             position: relative;
             display: inline-block;
@@ -44,14 +41,13 @@
             border-radius: 24px;
             box-shadow: 0 8px 18px rgba(0,0,0,0.3);
             cursor: pointer;
-            background-color: #6b8c5c;
+            background-color: #c9dbb2;
             width: 100%;
             height: auto;
             max-width: 900px;
             aspect-ratio: 900 / 550;
         }
 
-        /* Panel de información y diálogo */
         .info-panel {
             margin-top: 16px;
             display: flex;
@@ -61,6 +57,8 @@
             border-radius: 40px;
             padding: 12px 20px;
             border: 2px solid #c9a96b;
+            gap: 12px;
+            flex-wrap: wrap;
         }
 
         .badge {
@@ -71,62 +69,63 @@
             font-size: 12px;
             font-weight: bold;
             font-family: monospace;
+            white-space: nowrap;
         }
 
         .dialog {
             flex: 1;
-            margin: 0 16px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             color: #3a2a1f;
             background: #fff3e0;
-            padding: 10px 16px;
+            padding: 8px 16px;
             border-radius: 30px;
             font-family: monospace;
+            min-width: 150px;
         }
 
-        /* Controles táctiles (flechas) */
         .touch-controls {
             display: flex;
             justify-content: center;
             gap: 20px;
             margin-top: 20px;
-            transition: opacity 0.3s;
         }
 
         .ctrl-btn {
             background: #3a3a3a;
             border: none;
-            font-size: 32px;
-            padding: 16px 24px;
+            font-size: 28px;
+            padding: 12px 20px;
             border-radius: 60px;
             color: white;
-            box-shadow: 0 6px 0 #1a1a1a;
+            box-shadow: 0 5px 0 #1a1a1a;
             cursor: pointer;
             transition: 0.05s linear;
-            font-weight: bold;
             touch-action: manipulation;
+            font-weight: bold;
+            min-width: 70px;
         }
 
         .ctrl-btn:active {
-            transform: translateY(4px);
+            transform: translateY(3px);
             box-shadow: 0 2px 0 #1a1a1a;
         }
 
         .action-buttons {
             display: flex;
             justify-content: center;
-            gap: 16px;
+            gap: 12px;
             margin-top: 16px;
+            flex-wrap: wrap;
         }
 
         .pixel-btn {
             background: #f5bc70;
             border: none;
             font-family: monospace;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 40px;
             cursor: pointer;
             box-shadow: 0 4px 0 #b46f2a;
@@ -138,7 +137,6 @@
             box-shadow: 0 2px 0 #b46f2a;
         }
 
-        /* Pop-up modal para poemas / mensajes */
         .modal {
             position: fixed;
             top: 0;
@@ -159,9 +157,10 @@
             border-radius: 32px;
             border: 4px solid #ffcd7e;
             text-align: center;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             color: #2c2b1f;
+            white-space: pre-line;
         }
         .modal-content button {
             margin-top: 20px;
@@ -170,11 +169,10 @@
             padding: 8px 24px;
             border-radius: 40px;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 14px;
             cursor: pointer;
         }
 
-        /* Pantalla completa */
         .fullscreen canvas {
             max-width: 100vw;
             max-height: 100vh;
@@ -219,171 +217,281 @@
 
 <script>
     // ==========================================================
-    //  JUEGO CON IMÁGENES REALES (PLACEHOLDER)
-    //  Movimiento libre, detección por proximidad, pop-ups.
+    //  JUEGO CON GRÁFICOS DIBUJADOS POR CÓDIGO (NO IMÁGENES EXTERNAS)
+    //  Estilo cartoon / cuento ilustrado - sin rectángulos feos
     // ==========================================================
     
-    // ---------- CONFIGURACIÓN DE ESCENAS Y OBJETOS ----------
-    // Cada escena tiene un fondo y una lista de objetos interactuables.
-    // Los objetos tienen: nombre, x, y, radio, mensaje (poema/foto)
-    
+    // Configuración de escenas con objetos interactivos
     const ESCENAS = {
-        1: {   // Día 1: cama (mensaje del control)
-            fondo: "https://cdn.pixabay.com/photo/2016/11/19/14/00/bedroom-1835921_1280.jpg",
+        1: {   // Día 1: habitación
             objetos: [
-                { nombre: "📱 Mensaje del juego", x: 450, y: 400, radio: 50, 
-                  mensaje: "⚠️ ¡Para una mejor experiencia, conecta tu control! ⚠️\n(Usa el botón 'Control conectado' para simularlo)" }
+                { nombre: "💬 Mensaje del juego", x: 450, y: 400, radio: 55,
+                  mensaje: "⚠️ ¡Para una mejor experiencia, conecta tu control! ⚠️\n(Usa el botón azul 'Control conectado' para simularlo)" }
             ],
-            personajeInicio: { x: 450, y: 480 }
+            personajeInicio: { x: 450, y: 480 },
+            drawFondo: drawBedroom
         },
-        2: {   // Día 2: casa con recuerdos
-            fondo: "https://cdn.pixabay.com/photo/2017/08/06/12/06/living-room-2591714_1280.jpg",
+        2: {   // Día 2: sala de estar
             objetos: [
-                { nombre: "📚 Estante", x: 200, y: 300, radio: 60,
+                { nombre: "📚 Estante de libros", x: 180, y: 280, radio: 60,
                   mensaje: "📜 Poema: 'Tus manos abren cada libro de mi vida'.\n🖼️ Foto: ustedes leyendo juntos." },
-                { nombre: "🪴 Planta", x: 700, y: 420, radio: 50,
+                { nombre: "🌿 Planta verde", x: 720, y: 420, radio: 55,
                   mensaje: "🌱 'Como esta planta, nuestro amor florece cada día'.\n📸 Recuerdo: regando la maceta." },
-                { nombre: "🖼️ Cuadro", x: 500, y: 200, radio: 55,
+                { nombre: "🖼️ Cuadro familiar", x: 500, y: 180, radio: 50,
                   mensaje: "🖼️ Nuestra primera foto. ¡Qué felices!\n💌 Te quiero más cada día." }
             ],
-            personajeInicio: { x: 450, y: 500 }
+            personajeInicio: { x: 450, y: 500 },
+            drawFondo: drawLivingRoom
         },
         3: {   // Día 3: calle + esquina
-            fondo: "https://cdn.pixabay.com/photo/2016/11/29/13/04/street-1868688_1280.jpg",
             objetos: [
-                { nombre: "🌳 Árbol", x: 180, y: 380, radio: 65,
+                { nombre: "🌳 Árbol", x: 160, y: 380, radio: 65,
                   mensaje: "🍃 Poema: 'Bajo este árbol contamos secretos al viento'.\n📸 Foto: sentados en la piedra." },
-                { nombre: "💡 Farol", x: 750, y: 300, radio: 55,
+                { nombre: "💡 Farol", x: 760, y: 290, radio: 55,
                   mensaje: "🏮 'Cada tarde te esperaba aquí, farol testigo de nuestro amor'." },
                 { nombre: "⭐ Piedra del regalo", x: 450, y: 490, radio: 60,
                   mensaje: "🎁 ¡SEGUNDO REGALO! 🎁\nUna BEYBLADE + funda para tablet.\n💝 ¡Felicidades, amor!" }
             ],
-            personajeInicio: { x: 450, y: 520 }
+            personajeInicio: { x: 450, y: 520 },
+            drawFondo: drawStreet
         }
     };
     
     // Estado del juego
-    let currentDay = 1;          // 1,2,3
+    let currentDay = 1;
     let player = { x: 450, y: 480 };
-    let surpriseDone = false;    // si ya vio el mensaje del control (día1)
-    let objetosVisitados = { 2: [], 3: [] }; // guardar IDs visitados
-    let currentScene = null;
-    
-    // Imágenes y canvas
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    let bgImage = new Image();
-    let characterImg = new Image();
-    
-    // Cargar sprite del personaje (placeholder libre)
-    characterImg.src = "https://cdn-icons-png.flaticon.com/512/1995/1995572.png"; // chico aventurero
-    
-    // Variables para movimiento
-    let moveLeft = false, moveRight = false, moveUp = false, moveDown = false;
-    let lastTimestamp = 0;
-    
-    // Pop-up
+    let surpriseDone = false;
+    let objetosVisitados = { 2: [], 3: [] };
+    let controlConnected = false;
     let activeModal = null;
     
-    // Control conectado
-    let controlConnected = false;
+    // Movimiento
+    let moveLeft = false, moveRight = false, moveUp = false, moveDown = false;
     
-    // DOM elements
+    // Canvas
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Elementos DOM
     const dayBadge = document.getElementById('dayBadge');
     const giftBadge = document.getElementById('giftBadge');
     const dialogBox = document.getElementById('dialogBox');
     const touchControlsDiv = document.getElementById('touchControls');
     const gameWrapper = document.getElementById('gameWrapper');
     
-    // ---------- FUNCIONES ----------
-    function loadScene(day) {
-        currentScene = ESCENAS[day];
-        if (!currentScene) return;
-        bgImage.src = currentScene.fondo;
-        // Posición inicial del personaje
-        player.x = currentScene.personajeInicio.x;
-        player.y = currentScene.personajeInicio.y;
-        // Inicializar visitados para este día
-        if (!objetosVisitados[day]) objetosVisitados[day] = [];
-        // Actualizar UI
-        updateUI();
-        draw();
+    // ---------- FUNCIONES DE DIBUJO DE FONDOS (estilo cartoon) ----------
+    function drawBedroom() {
+        // Pared y suelo
+        const gradWall = ctx.createLinearGradient(0, 0, 0, 300);
+        gradWall.addColorStop(0, "#f7e5c2");
+        gradWall.addColorStop(1, "#e6cf9e");
+        ctx.fillStyle = gradWall;
+        ctx.fillRect(0, 0, 900, 400);
+        ctx.fillStyle = "#b87c4f";
+        ctx.fillRect(0, 380, 900, 170);
+        // ventana
+        ctx.fillStyle = "#aad0d6";
+        ctx.shadowBlur = 4;
+        ctx.fillRect(680, 60, 140, 140);
+        ctx.fillStyle = "#f9f3d9";
+        ctx.fillRect(690, 70, 120, 120);
+        ctx.fillStyle = "#7c5e3a";
+        for(let i=0;i<3;i++) ctx.fillRect(690 + i*40, 70, 8, 120);
+        ctx.fillStyle = "#ffd966";
+        ctx.beginPath();
+        ctx.arc(750, 130, 25, 0, Math.PI*2);
+        ctx.fill();
+        // cama
+        ctx.fillStyle = "#c28b5c";
+        ctx.beginPath();
+        ctx.roundRect(200, 280, 260, 130, 20);
+        ctx.fill();
+        ctx.fillStyle = "#f0cca6";
+        ctx.beginPath();
+        ctx.roundRect(220, 260, 220, 35, 15);
+        ctx.fill();
+        ctx.fillStyle = "#e3b87c";
+        ctx.fillRect(230, 300, 100, 50);
+        // mesita
+        ctx.fillStyle = "#a57348";
+        ctx.fillRect(100, 420, 70, 50);
+        ctx.fillStyle = "#d6a15a";
+        ctx.beginPath();
+        ctx.arc(135, 415, 20, 0, Math.PI*2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
     }
     
-    function updateUI() {
-        dayBadge.innerText = `📅 DÍA ${currentDay}`;
-        if (currentDay === 1 && !surpriseDone) giftBadge.innerText = "🎁 CONTROL SORPRESA";
-        else if (currentDay === 2) giftBadge.innerText = `🏠 Recuerdos: ${objetosVisitados[2]?.length || 0}/${ESCENAS[2].objetos.length}`;
-        else if (currentDay === 3) giftBadge.innerText = `⭐ Regalo: ${objetosVisitados[3]?.some(o => o === "⭐ Piedra del regalo") ? "OBTENIDO" : "Pendiente"}`;
-        else giftBadge.innerText = "✨ Completado ✨";
-        
-        // Mensaje flotante de proximidad
-        let nearObj = getNearbyObject();
-        if (nearObj && !controlConnected && currentDay === 1 && !surpriseDone) {
-            dialogBox.innerText = `🔍 Cerca de: ${nearObj.nombre}. ¡Haz clic en el objeto!`;
-        } else if (nearObj && currentDay !== 1) {
-            dialogBox.innerText = `🔍 Cerca de: ${nearObj.nombre}. ¡Toca el objeto para tu recuerdo!`;
-        } else {
-            dialogBox.innerText = "💬 Muévete con las flechas y acércate a los objetos brillantes.";
+    function drawLivingRoom() {
+        // pared y suelo
+        ctx.fillStyle = "#efdfb7";
+        ctx.fillRect(0, 0, 900, 360);
+        ctx.fillStyle = "#c29a6b";
+        ctx.fillRect(0, 340, 900, 210);
+        // sofá
+        ctx.fillStyle = "#7fa56e";
+        ctx.beginPath();
+        ctx.roundRect(60, 240, 220, 110, 25);
+        ctx.fill();
+        ctx.fillStyle = "#5e8b4c";
+        ctx.fillRect(80, 260, 180, 70);
+        // estantería
+        ctx.fillStyle = "#b58c5a";
+        ctx.fillRect(680, 160, 120, 230);
+        for(let i=0;i<4;i++) ctx.fillStyle = "#8b6942", ctx.fillRect(690, 180+i*50, 100, 8);
+        // cuadro
+        ctx.fillStyle = "#e5c69e";
+        ctx.fillRect(400, 100, 120, 90);
+        ctx.fillStyle = "#4a6b3c";
+        ctx.fillRect(420, 120, 80, 50);
+        // lámpara
+        ctx.fillStyle = "#dbb45c";
+        ctx.beginPath();
+        ctx.moveTo(300, 180);
+        ctx.lineTo(330, 240);
+        ctx.lineTo(270, 240);
+        ctx.fill();
+    }
+    
+    function drawStreet() {
+        // cielo
+        const gradSky = ctx.createLinearGradient(0, 0, 0, 300);
+        gradSky.addColorStop(0, "#b2d8e8");
+        gradSky.addColorStop(1, "#f0d89e");
+        ctx.fillStyle = gradSky;
+        ctx.fillRect(0, 0, 900, 320);
+        // suelo
+        ctx.fillStyle = "#8cb06b";
+        ctx.fillRect(0, 300, 900, 250);
+        ctx.fillStyle = "#c7a86b";
+        ctx.fillRect(0, 330, 900, 40);
+        // árbol
+        ctx.fillStyle = "#6d4c2c";
+        ctx.fillRect(120, 260, 30, 120);
+        ctx.fillStyle = "#5b8c4e";
+        ctx.beginPath();
+        ctx.arc(135, 240, 45, 0, Math.PI*2);
+        ctx.fill();
+        // farol
+        ctx.fillStyle = "#5a5a5a";
+        ctx.fillRect(730, 220, 12, 140);
+        ctx.fillStyle = "#ffd966";
+        ctx.beginPath();
+        ctx.arc(736, 215, 18, 0, Math.PI*2);
+        ctx.fill();
+        // piedra (esquina)
+        ctx.fillStyle = "#9c8468";
+        ctx.beginPath();
+        ctx.ellipse(450, 470, 45, 25, 0, 0, Math.PI*2);
+        ctx.fill();
+        ctx.fillStyle = "#ccaa77";
+        ctx.beginPath();
+        ctx.ellipse(450, 465, 35, 18, 0, 0, Math.PI*2);
+        ctx.fill();
+    }
+    
+    // Dibujar personaje estilo "aventurero"
+    function drawCharacter(x, y) {
+        ctx.save();
+        ctx.shadowBlur = 0;
+        // cuerpo
+        ctx.fillStyle = "#4a90e2";
+        ctx.beginPath();
+        ctx.roundRect(x-15, y-35, 30, 45, 12);
+        ctx.fill();
+        // cabeza
+        ctx.fillStyle = "#fdd7a8";
+        ctx.beginPath();
+        ctx.arc(x, y-28, 18, 0, Math.PI*2);
+        ctx.fill();
+        // ojos
+        ctx.fillStyle = "#2c2e3a";
+        ctx.beginPath();
+        ctx.arc(x-7, y-33, 3, 0, Math.PI*2);
+        ctx.arc(x+7, y-33, 3, 0, Math.PI*2);
+        ctx.fill();
+        ctx.fillStyle = "white";
+        ctx.beginPath();
+        ctx.arc(x-8, y-34, 1, 0, Math.PI*2);
+        ctx.arc(x+6, y-34, 1, 0, Math.PI*2);
+        ctx.fill();
+        // sonrisa
+        ctx.beginPath();
+        ctx.arc(x, y-25, 8, 0.1, Math.PI - 0.1);
+        ctx.strokeStyle = "#6b3e1a";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        // gorra
+        ctx.fillStyle = "#d93929";
+        ctx.beginPath();
+        ctx.ellipse(x, y-45, 16, 8, 0, 0, Math.PI*2);
+        ctx.fill();
+        ctx.fillStyle = "#b52b1c";
+        ctx.fillRect(x-12, y-47, 24, 6);
+        ctx.restore();
+    }
+    
+    // Dibujar círculos de interacción
+    function drawInteractables() {
+        if (!ESCENAS[currentDay]) return;
+        for (let obj of ESCENAS[currentDay].objetos) {
+            ctx.beginPath();
+            ctx.arc(obj.x, obj.y, obj.radio, 0, Math.PI*2);
+            ctx.fillStyle = "rgba(255, 220, 100, 0.3)";
+            ctx.fill();
+            ctx.strokeStyle = "#ffb347";
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+            ctx.font = "bold 13px monospace";
+            ctx.fillStyle = "#2c2b26";
+            ctx.shadowBlur = 2;
+            ctx.fillText(obj.nombre, obj.x-30, obj.y-15);
+            ctx.shadowBlur = 0;
         }
     }
     
-    // Detectar objeto más cercano dentro del radio
+    function draw() {
+        // Limpiar
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Dibujar fondo según escena
+        if (ESCENAS[currentDay] && ESCENAS[currentDay].drawFondo) {
+            ESCENAS[currentDay].drawFondo();
+        } else {
+            ctx.fillStyle = "#c9dbb2";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        // Dibujar objetos interactivos
+        drawInteractables();
+        // Dibujar personaje
+        drawCharacter(player.x, player.y);
+        // Indicador de control conectado
+        if (controlConnected) {
+            ctx.font = "bold 16px monospace";
+            ctx.fillStyle = "#00cc99";
+            ctx.shadowBlur = 0;
+            ctx.fillText("🎮 CONTROL CONECTADO", 20, 50);
+        }
+    }
+    
+    // Detectar objeto cercano
     function getNearbyObject() {
-        if (!currentScene) return null;
-        for (let obj of currentScene.objetos) {
+        if (!ESCENAS[currentDay]) return null;
+        for (let obj of ESCENAS[currentDay].objetos) {
             const dx = player.x - obj.x;
             const dy = player.y - obj.y;
-            const dist = Math.sqrt(dx*dx + dy*dy);
-            if (dist < obj.radio) return obj;
+            if (Math.hypot(dx, dy) < obj.radio) return obj;
         }
         return null;
     }
     
-    // Manejar clic en el canvas: si hay un objeto cerca, mostrar pop-up
-    function handleCanvasClick(e) {
-        const nearby = getNearbyObject();
-        if (!nearby) {
-            if (currentDay === 1 && !surpriseDone) {
-                dialogBox.innerText = "Acércate al mensaje del juego (centro de la habitación) para conectar el control.";
-            } else {
-                dialogBox.innerText = "Acércate a un objeto brillante para interactuar.";
-            }
-            return;
-        }
-        
-        // Caso especial día 1: mensaje del control
-        if (currentDay === 1 && !surpriseDone) {
-            showModal("🎮 SORPRESA 🎮\n\n¡Mira a tu lado! ¡Aquí está tu control 8bitdo!\n(Simula que se lo entregas en la vida real)\n\nAhora puedes conectar el control con el botón azul.", () => {
-                surpriseDone = true;
-                saveGame();
-                updateUI();
-                draw();
-            });
-            return;
-        }
-        
-        // Días 2 y 3: mostrar poema/foto
-        if (currentDay === 2 || currentDay === 3) {
-            // Verificar si ya lo había visto
-            const yaVisto = objetosVisitados[currentDay]?.includes(nearby.nombre);
-            if (!yaVisto) {
-                objetosVisitados[currentDay].push(nearby.nombre);
-                saveGame();
-            }
-            showModal(nearby.mensaje, null);
-            updateUI();
-            draw();
-        }
-    }
-    
+    // Mostrar pop-up
     function showModal(text, onClose) {
         if (activeModal) activeModal.remove();
         const modalDiv = document.createElement('div');
         modalDiv.className = 'modal';
         modalDiv.innerHTML = `
             <div class="modal-content">
-                <p style="white-space: pre-line;">${text}</p>
+                <p>${text.replace(/\n/g, '<br>')}</p>
                 <button id="closeModalBtn">Cerrar</button>
             </div>
         `;
@@ -396,144 +504,128 @@
         };
     }
     
-    // Movimiento del personaje
+    // Manejar clic en canvas (interacción)
+    function handleCanvasClick() {
+        const nearby = getNearbyObject();
+        if (!nearby) {
+            dialogBox.innerText = "Acércate a un objeto brillante (círculo dorado).";
+            return;
+        }
+        // Día 1: mensaje del control
+        if (currentDay === 1 && !surpriseDone) {
+            showModal("🎮 ¡SORPRESA! 🎮\n\nMira a tu lado: ¡aquí está tu control 8bitdo!\n(Entrégaselo en la vida real)\n\nAhora puedes usar el botón 'Control conectado' para pantalla completa.", () => {
+                surpriseDone = true;
+                saveGame();
+                updateUI();
+                draw();
+            });
+            return;
+        }
+        // Días 2 y 3: mostrar poema / regalo
+        if (currentDay === 2 || currentDay === 3) {
+            const yaVisto = objetosVisitados[currentDay]?.includes(nearby.nombre);
+            if (!yaVisto) {
+                objetosVisitados[currentDay].push(nearby.nombre);
+                saveGame();
+            }
+            showModal(nearby.mensaje, null);
+            updateUI();
+            draw();
+        }
+    }
+    
+    // Movimiento
     function updateMovement() {
-        let speed = 3.5;
         let newX = player.x;
         let newY = player.y;
+        const speed = 3.8;
         if (moveLeft) newX -= speed;
         if (moveRight) newX += speed;
         if (moveUp) newY -= speed;
         if (moveDown) newY += speed;
-        // límites del canvas (márgenes para no salirse)
-        newX = Math.min(Math.max(newX, 40), canvas.width - 40);
-        newY = Math.min(Math.max(newY, 50), canvas.height - 50);
-        player.x = newX;
-        player.y = newY;
+        player.x = Math.min(Math.max(newX, 40), canvas.width - 40);
+        player.y = Math.min(Math.max(newY, 50), canvas.height - 50);
         draw();
         updateUI();
     }
     
-    // Dibujar todo
-    function draw() {
-        if (!bgImage.complete || bgImage.naturalWidth === 0) return;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // Fondo
-        ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+    function updateUI() {
+        dayBadge.innerText = `📅 DÍA ${currentDay}`;
+        if (currentDay === 1 && !surpriseDone) giftBadge.innerText = "🎁 CONTROL SORPRESA";
+        else if (currentDay === 2) giftBadge.innerText = `🏠 Recuerdos: ${objetosVisitados[2]?.length || 0}/${ESCENAS[2].objetos.length}`;
+        else if (currentDay === 3) giftBadge.innerText = objetosVisitados[3]?.includes("⭐ Piedra del regalo") ? "⭐ REGALO OBTENIDO" : "⭐ Busca la piedra";
+        else giftBadge.innerText = "✨ Completado ✨";
         
-        // Dibujar objetos interactivos con un resplandor simple
-        if (currentScene) {
-            for (let obj of currentScene.objetos) {
-                // Círculo de interacción
-                ctx.beginPath();
-                ctx.arc(obj.x, obj.y, obj.radio, 0, Math.PI*2);
-                ctx.fillStyle = "rgba(255, 215, 0, 0.3)";
-                ctx.fill();
-                ctx.strokeStyle = "#ffaa33";
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                // Nombre
-                ctx.font = "bold 14px monospace";
-                ctx.fillStyle = "#ffffff";
-                ctx.shadowBlur = 4;
-                ctx.fillText(obj.nombre, obj.x-25, obj.y-15);
-                ctx.shadowBlur = 0;
-            }
-        }
-        
-        // Dibujar personaje
-        if (characterImg.complete && characterImg.naturalWidth > 0) {
-            ctx.drawImage(characterImg, player.x-25, player.y-35, 50, 50);
-        } else {
-            ctx.fillStyle = "#ff9966";
-            ctx.fillRect(player.x-15, player.y-30, 30, 40);
-        }
-        
-        // Si control conectado, dibujar un indicador
-        if (controlConnected) {
-            ctx.font = "bold 20px monospace";
-            ctx.fillStyle = "#00ffcc";
-            ctx.shadowBlur = 0;
-            ctx.fillText("🎮 CONTROL CONECTADO", 20, 50);
-        }
+        const near = getNearbyObject();
+        if (near && currentDay === 1 && !surpriseDone) dialogBox.innerText = `🔍 Cerca: ${near.nombre}. ¡Tócalo!`;
+        else if (near && currentDay !== 1) dialogBox.innerText = `🔍 Cerca: ${near.nombre}. Toca para tu recuerdo.`;
+        else dialogBox.innerText = "💬 Muévete con las flechas y acércate a los círculos dorados.";
     }
     
-    // Cambiar a pantalla completa y ocultar controles táctiles
-    function enableControlMode() {
-        controlConnected = true;
-        touchControlsDiv.style.display = "none";
-        // Pantalla completa
-        if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen();
-        }
-        gameWrapper.classList.add('fullscreen');
-        dialogBox.innerText = "🎮 Modo control activado. ¡Disfruta la experiencia!";
-        updateUI();
-        draw();
-    }
-    
-    // Avanzar de día (regalo real)
+    // Avanzar día
     function nextDay() {
         if (currentDay === 1 && !surpriseDone) {
-            showModal("Primero debes recibir la sorpresa del control. Acércate al mensaje en la habitación y haz clic.", null);
+            showModal("Primero recibe la sorpresa del control (acércate al mensaje y tócalo).", null);
             return;
         }
-        if (currentDay === 2 && objetosVisitados[2]?.length < ESCENAS[2].objetos.length) {
-            showModal("Aún no has encontrado todos los recuerdos de la casa. Explora y toca los objetos brillantes.", null);
+        if (currentDay === 2 && (objetosVisitados[2]?.length || 0) < ESCENAS[2].objetos.length) {
+            showModal(`Aún faltan ${ESCENAS[2].objetos.length - (objetosVisitados[2]?.length || 0)} recuerdos. Explora la casa.`, null);
             return;
         }
         if (currentDay === 3 && !objetosVisitados[3]?.includes("⭐ Piedra del regalo")) {
-            showModal("Debes reclamar el segundo regalo en la piedra de la esquina. Acércate y tócala.", null);
+            showModal("Debes reclamar el segundo regalo en la piedra de la esquina.", null);
             return;
         }
         
         if (currentDay === 1 && surpriseDone) {
             currentDay = 2;
-            loadScene(2);
+            player = { ...ESCENAS[2].personajeInicio };
             saveGame();
             showModal("🌅 ¡Día 2! Ahora explora tu casa. Acércate a los objetos para descubrir poemas y fotos.", null);
-        } else if (currentDay === 2 && objetosVisitados[2]?.length >= ESCENAS[2].objetos.length) {
+        } else if (currentDay === 2 && (objetosVisitados[2]?.length || 0) >= ESCENAS[2].objetos.length) {
             currentDay = 3;
-            loadScene(3);
+            player = { ...ESCENAS[3].personajeInicio };
             saveGame();
             showModal("🚪 Sales de casa. Llegarás a la esquina donde solían sentarse. Busca la piedra para tu segundo regalo.", null);
         } else if (currentDay === 3 && objetosVisitados[3]?.includes("⭐ Piedra del regalo")) {
             showModal("🎉 ¡FELICIDADES! Has completado todos los regalos. 🎉\nGracias por jugar. ¡Te quiero muchísimo!", null);
-            // Aquí podrías bloquear más avances
         }
         updateUI();
         draw();
     }
     
-    // Guardar progreso
+    // Control conectado: pantalla completa + ocultar botones
+    function enableControlMode() {
+        controlConnected = true;
+        touchControlsDiv.style.display = "none";
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+        }
+        gameWrapper.classList.add('fullscreen');
+        dialogBox.innerText = "🎮 Modo control activado. ¡Disfruta!";
+        draw();
+    }
+    
+    // Guardado
     function saveGame() {
-        const save = {
-            currentDay,
-            surpriseDone,
-            objetosVisitados,
-            playerPos: { x: player.x, y: player.y }
-        };
+        const save = { currentDay, surpriseDone, objetosVisitados, playerPos: { x: player.x, y: player.y } };
         localStorage.setItem('pokemonAmorSave', JSON.stringify(save));
     }
     
     function loadGame() {
         const data = localStorage.getItem('pokemonAmorSave');
         if (data) {
-            try {
-                const saved = JSON.parse(data);
-                currentDay = saved.currentDay;
-                surpriseDone = saved.surpriseDone;
-                objetosVisitados = saved.objetosVisitados || { 2: [], 3: [] };
-                if (saved.playerPos) {
-                    player.x = saved.playerPos.x;
-                    player.y = saved.playerPos.y;
-                }
-                loadScene(currentDay);
-            } catch(e) {}
+            const saved = JSON.parse(data);
+            currentDay = saved.currentDay;
+            surpriseDone = saved.surpriseDone;
+            objetosVisitados = saved.objetosVisitados || { 2: [], 3: [] };
+            if (saved.playerPos) player = saved.playerPos;
         } else {
-            loadScene(1);
+            currentDay = 1;
+            player = { ...ESCENAS[1].personajeInicio };
         }
         updateUI();
+        draw();
     }
     
     function resetGame() {
@@ -545,48 +637,63 @@
         touchControlsDiv.style.display = "flex";
         gameWrapper.classList.remove('fullscreen');
         if (document.fullscreenElement) document.exitFullscreen();
-        loadScene(1);
+        player = { ...ESCENAS[1].personajeInicio };
         updateUI();
         draw();
     }
     
-    // Eventos de movimiento táctil / ratón
+    // Eventos de movimiento
     function attachControls() {
-        document.getElementById('btnUp').addEventListener('mousedown', () => moveUp=true);
-        document.getElementById('btnUp').addEventListener('mouseup', () => moveUp=false);
-        document.getElementById('btnUp').addEventListener('touchstart', (e) => { e.preventDefault(); moveUp=true; });
-        document.getElementById('btnUp').addEventListener('touchend', () => moveUp=false);
-        
-        document.getElementById('btnDown').addEventListener('mousedown', () => moveDown=true);
-        document.getElementById('btnDown').addEventListener('mouseup', () => moveDown=false);
-        document.getElementById('btnDown').addEventListener('touchstart', (e) => { e.preventDefault(); moveDown=true; });
-        document.getElementById('btnDown').addEventListener('touchend', () => moveDown=false);
-        
-        document.getElementById('btnLeft').addEventListener('mousedown', () => moveLeft=true);
-        document.getElementById('btnLeft').addEventListener('mouseup', () => moveLeft=false);
-        document.getElementById('btnLeft').addEventListener('touchstart', (e) => { e.preventDefault(); moveLeft=true; });
-        document.getElementById('btnLeft').addEventListener('touchend', () => moveLeft=false);
-        
-        document.getElementById('btnRight').addEventListener('mousedown', () => moveRight=true);
-        document.getElementById('btnRight').addEventListener('mouseup', () => moveRight=false);
-        document.getElementById('btnRight').addEventListener('touchstart', (e) => { e.preventDefault(); moveRight=true; });
-        document.getElementById('btnRight').addEventListener('touchend', () => moveRight=false);
-        
-        // Bucle de movimiento
-        setInterval(() => { updateMovement(); }, 25);
+        const addEvent = (id, dir) => {
+            const btn = document.getElementById(id);
+            btn.addEventListener('mousedown', () => { move[dir] = true; });
+            btn.addEventListener('mouseup', () => { move[dir] = false; });
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); move[dir] = true; });
+            btn.addEventListener('touchend', () => { move[dir] = false; });
+        };
+        const move = { up: false, down: false, left: false, right: false };
+        moveUp = () => move.up; moveDown = () => move.down; moveLeft = () => move.left; moveRight = () => move.right;
+        window.moveUp = move.up; window.moveDown = move.down; window.moveLeft = move.left; window.moveRight = move.right;
+        addEvent('btnUp', 'up'); addEvent('btnDown', 'down'); addEvent('btnLeft', 'left'); addEvent('btnRight', 'right');
+        setInterval(() => {
+            let nx = player.x, ny = player.y;
+            if (move.up) ny -= 3.8;
+            if (move.down) ny += 3.8;
+            if (move.left) nx -= 3.8;
+            if (move.right) nx += 3.8;
+            player.x = Math.min(Math.max(nx, 40), canvas.width - 40);
+            player.y = Math.min(Math.max(ny, 50), canvas.height - 50);
+            draw();
+            updateUI();
+        }, 25);
     }
     
-    // Eventos globales
+    // Inicializar
     canvas.addEventListener('click', handleCanvasClick);
     document.getElementById('resetBtn').addEventListener('click', resetGame);
     document.getElementById('nextDayBtn').addEventListener('click', nextDay);
     document.getElementById('controlConnectedBtn').addEventListener('click', enableControlMode);
-    
-    // Iniciar
     attachControls();
     loadGame();
-    bgImage.onload = () => draw();
-    characterImg.onload = () => draw();
+    draw();
+    
+    // Helper roundRect
+    if (!CanvasRenderingContext2D.prototype.roundRect) {
+        CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+            if (w < 2 * r) r = w / 2;
+            if (h < 2 * r) r = h / 2;
+            this.moveTo(x+r, y);
+            this.lineTo(x+w-r, y);
+            this.quadraticCurveTo(x+w, y, x+w, y+r);
+            this.lineTo(x+w, y+h-r);
+            this.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+            this.lineTo(x+r, y+h);
+            this.quadraticCurveTo(x, y+h, x, y+h-r);
+            this.lineTo(x, y+r);
+            this.quadraticCurveTo(x, y, x+r, y);
+            return this;
+        };
+    }
 </script>
 </body>
 </html>
