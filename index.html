@@ -2,212 +2,585 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Viaje de Cumpleaños - RPG</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Aventura Pokémon - Regalos para mi novio</title>
     <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
         body {
-            font-family: 'Press Start 2P', monospace;
-            background-color: #121214;
-            color: #fff;
+            background: #1a2a32;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             min-height: 100vh;
+            font-family: 'Press Start 2P', 'Courier New', monospace;
             margin: 0;
-            overflow: hidden;
+            padding: 20px;
         }
 
-        #status {
-            font-size: 10px;
-            color: #ffcc00;
-            margin-bottom: 20px;
-            text-align: center;
-            line-height: 1.6;
+        /* Fuente pixelada */
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        .game-container {
+            background: #0f0f0f;
+            border-radius: 20px;
+            padding: 12px;
+            box-shadow: 0 10px 0 #000;
+            border: 3px solid #5a5a5a;
         }
 
-        /* El Mapa del Mundo (Grid de 10x10) */
-        #map {
-            display: grid;
-            grid-template-columns: repeat(10, 40px);
-            grid-template-rows: repeat(10, 40px);
-            gap: 2px;
-            background-color: #222;
-            border: 4px solid #fff;
-            box-shadow: 0 0 20px rgba(0,0,0,0.7);
-            position: relative;
+        canvas {
+            display: block;
+            margin: 0 auto;
+            cursor: pointer;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+            image-rendering: pixelated;
+            background-color: #7c9c5e;
         }
 
-        .cell {
-            background-color: #1a1a1e;
+        .dialogue-box {
+            background: #2c2c2c;
+            border-top: 4px solid #ffcb05;
+            border-bottom: 4px solid #ffcb05;
+            padding: 12px;
+            margin-top: 12px;
+            color: #f8f8f8;
+            font-size: 12px;
+            line-height: 1.5;
+            font-family: 'Press Start 2P', monospace;
+            text-shadow: 2px 2px 0 #1a1a1a;
+        }
+
+        .button-panel {
             display: flex;
-            align-items: center;
+            gap: 12px;
             justify-content: center;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .pixel-btn {
+            background: #ffcb05;
+            border: none;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            padding: 10px 16px;
+            color: #2c2c2c;
+            box-shadow: 0 4px 0 #b97f10;
+            cursor: pointer;
+            transition: 0.05s linear;
+            border-radius: 8px;
+        }
+
+        .pixel-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        .surprise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+            font-family: 'Press Start 2P', monospace;
+            animation: flash 0.3s infinite alternate;
+        }
+
+        .surprise-text {
+            font-size: 64px;
+            color: #ff3a3a;
+            text-shadow: 6px 6px 0 #ffcb05;
+            letter-spacing: 8px;
+            animation: shake 0.2s infinite;
+        }
+
+        .surprise-sub {
+            margin-top: 30px;
+            color: white;
             font-size: 14px;
         }
 
-        /* Estilos de los elementos del juego */
-        .player {
-            background-color: #00ff66; /* Tu novio versión pixel */
-            border-radius: 4px;
-            box-shadow: inset 0 0 8px #000;
+        @keyframes flash {
+            from { background-color: black; }
+            to { background-color: #440000; }
         }
 
-        .building {
-            border: 2px dashed #ff3363;
-            cursor: pointer;
+        @keyframes shake {
+            0% { transform: translate(1px, 1px); }
+            100% { transform: translate(-1px, -1px); }
         }
 
-        /* Carteles flotantes para los Regalos/Zonas */
-        .modal {
+        .hidden {
             display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #1a1a1e;
-            border: 4px solid #fff;
-            padding: 30px;
-            text-align: center;
-            max-width: 400px;
-            box-shadow: 0 0 50px rgba(0,0,0,0.9);
-            z-index: 10;
         }
 
-        .modal.active { display: block; }
-        .modal h2 { font-size: 14px; color: #ffcc00; margin-bottom: 20px; }
-        .modal p { font-size: 10px; line-height: 1.8; }
+        .day-info {
+            background: #2c2c2c;
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin-bottom: 8px;
+            font-size: 10px;
+            color: #ffcb05;
+        }
     </style>
 </head>
 <body>
-
-    <div id="status">🎮 CONTROL DESCONECTADO<br>Conectá tu 8BitDo Lite 2 o usá las flechas del teclado</div>
-
-    <!-- MAPA DEL JUEGO -->
-    <div id="map"></div>
-
-    <!-- MODALES DE HISTORIA / REGALOS -->
-    <div id="modal-event" class="modal">
-        <h2 id="modal-title">ZONA BLOQUEADA</h2>
-        <p id="modal-text">Contenido del evento...</p>
-        <button style="font-family:'Press Start 2P'; margin-top:20px; cursor:pointer;" onclick="closeModal()">CERRAR [B]</button>
+<div>
+    <div class="game-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div class="day-info" id="dayDisplay">DÍA 1</div>
+            <div class="day-info" id="giftStatus">🎁 Regalo pendiente</div>
+        </div>
+        <canvas id="gameCanvas" width="720" height="400" style="width:100%; height:auto; max-width:720px; aspect-ratio:720/400"></canvas>
+        <div class="dialogue-box" id="dialogue">
+            ✨ ¡Haz click en los objetos brillantes! ✨
+        </div>
+        <div class="button-panel">
+            <button class="pixel-btn" id="resetBtn">🔁 Reiniciar aventura</button>
+            <button class="pixel-btn" id="nextDayBtn" style="background:#4caf50; color:white;">🌙 Terminar día / Siguiente regalo</button>
+        </div>
     </div>
+</div>
 
-    <script>
-        const GRID_SIZE = 10;
-        
-        // Posición inicial del jugador (X, Y)
-        let player = { x: 1, y: 1 };
-
-        // Definición de las "Ciudades / Edificios" en las coordenadas (X, Y)
-        const locations = {
-            "3,3": { title: "CIUDAD 1: PUEBLO CONTROL", text: "¡Felicidades! Encontraste el primer cofre. Acá desbloqueás tu control 8BitDo Lite 2 en el mundo real. ¡Conectalo ahora para seguir explorando!", icon: "🕹️" },
-            "7,4": { title: "CIUDAD 2: DISTRITO TABLET", text: "Estás en el centro multimedia. Para proteger tu pantalla de analista de anime, ganaste la funda Origami para tu Xiaomi Pad 6. (Inserte poema/foto aquí)", icon: "📁" },
-            "5,8": { title: "CIUDAD 3: ARENA BEYBLADE", text: "¡El clímax del torneo! Derrotaste al jefe final. Tu recompensa son 2 Beyblades listos para la batalla en el mundo real. ¡Feliz Cumpleaños!", icon: "🌪️" }
+<script>
+    // --------------------------------------------------------------
+    //  CONFIGURACIÓN DE LA AVENTURA (¡Personaliza aquí!)
+    // --------------------------------------------------------------
+    // Los poemas, fotos y mensajes que aparecerán.
+    // Puedes cambiar textos, agregar imágenes o links.
+    
+    const HOUSE_ITEMS = [
+        { name: "📚 Estante de libros", x: 120, y: 220, w: 70, h: 80, 
+          message: "📖 *Poema encontrado*:\n\"Tus ojos son dos constelaciones,\nen ellas me pierdo cada noche.\"\n\n(Adjunto: foto de ustedes leyendo juntos)" },
+        { name: "🪴 Maceta con una planta", x: 580, y: 250, w: 50, h: 60,
+          message: "🌱 *Recuerdo*: La planta que regamos aquel día de lluvia.\nFoto: [Ustedes sonriendo bajo la lluvia]" },
+        { name: "🖼️ Cuadro familiar", x: 380, y: 150, w: 80, h: 70,
+          message: "🖼️ Mira esta foto: ¡nuestra primera cita!\n(Siempre tan felices)" }
+    ];
+    
+    const STREET_ITEMS = [
+        { name: "🌳 Árbol de la esquina", x: 150, y: 200, w: 60, h: 90,
+          message: "🍃 Bajo este árbol compartimos secretos. \nTe regalo este poema: \n\"El viento guarda nuestras risas,\ncomo este árbol guarda las estaciones.\"" },
+        { name: "💡 Farol", x: 500, y: 180, w: 40, h: 100,
+          message: "🏮 Aquí te esperaba cada tarde. \nFoto: [Tú sentada en la piedra, él llegando con una flor]" }
+    ];
+    
+    const STONE_GIFT_MESSAGE = "🎁 ¡Has llegado a nuestra piedra especial! 🎁\nReclama tu SEGUNDO REGALO: ¡una Beyblade! (El control ya lo tienes, ahora este es para tus batallas).\n💝 Te quiero mucho. 💝";
+    
+    // --------------------------------------------------------------
+    //  ESTADO DEL JUEGO Y DÍAS
+    // --------------------------------------------------------------
+    let currentDay = 1;        // 1: Sorpresa cama, 2: Casa, 3: Calle + esquina
+    let surpriseDone = false;   // si ya pasó la escena del control
+    let houseInteractions = 0;   // cuántos objetos de casa ha visto
+    let stoneClaimed = false;    // si ya reclamó el regalo de la esquina
+    let streetInteractions = 0;
+    
+    // Referencias
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const dialogueBox = document.getElementById('dialogue');
+    const dayDisplaySpan = document.getElementById('dayDisplay');
+    const giftStatusSpan = document.getElementById('giftStatus');
+    
+    // Coordenadas del personaje (fijo para cada escena)
+    let playerX = 360, playerY = 330;
+    
+    // Función para guardar progreso
+    function saveGame() {
+        const save = {
+            currentDay, surpriseDone, houseInteractions, stoneClaimed, streetInteractions
         };
-
-        // Generar el mapa visualmente en el HTML
-        function drawMap() {
-            const mapContainer = document.getElementById('map');
-            mapContainer.innerHTML = '';
-
-            for (let y = 0; y < GRID_SIZE; y++) {
-                for (let x = 0; x < GRID_SIZE; x++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'cell';
-                    
-                    // Verificar si es la posición del jugador
-                    if (x === player.x && y === player.y) {
-                        cell.classList.add('player');
-                        cell.innerText = "👦";
-                    } 
-                    // Verificar si hay un edificio en esta coordenada
-                    else if (locations[`${x},${y}`]) {
-                        cell.classList.add('building');
-                        cell.innerText = locations[`${x},${y}`].icon;
+        localStorage.setItem('pokemonAventuraSave', JSON.stringify(save));
+    }
+    
+    function loadGame() {
+        const raw = localStorage.getItem('pokemonAventuraSave');
+        if (!raw) return;
+        try {
+            const data = JSON.parse(raw);
+            currentDay = data.currentDay || 1;
+            surpriseDone = data.surpriseDone || false;
+            houseInteractions = data.houseInteractions || 0;
+            stoneClaimed = data.stoneClaimed || false;
+            streetInteractions = data.streetInteractions || 0;
+            // validación: si ya pasó día 1 y surpriseDone false por error, lo corregimos
+            if (currentDay > 1 && !surpriseDone) surpriseDone = true;
+        } catch(e) {}
+    }
+    
+    function resetGame() {
+        localStorage.removeItem('pokemonAventuraSave');
+        currentDay = 1;
+        surpriseDone = false;
+        houseInteractions = 0;
+        stoneClaimed = false;
+        streetInteractions = 0;
+        dialogueBox.innerHTML = "✨ ¡Aventura reiniciada! Vuelve a empezar desde la cama ✨";
+        saveGame();
+        drawScene();
+        updateUI();
+    }
+    
+    // Mostrar diálogo bonito
+    function setDialogue(text, isError = false) {
+        dialogueBox.innerHTML = text.replace(/\n/g, '<br>');
+        if (isError) dialogueBox.style.borderTopColor = "#ff4444";
+        else dialogueBox.style.borderTopColor = "#ffcb05";
+    }
+    
+    // Dibujar cada escenario
+    function drawScene() {
+        ctx.clearRect(0, 0, 720, 400);
+        
+        // Día 1: habitación (cama)
+        if (currentDay === 1 && !surpriseDone) {
+            drawBedroom();
+            drawPlayer(30, 310); // personaje acostado / sentado
+            setDialogue("💤 Estás en tu cama. Aparece un mensaje:\n⚠️ 'Para una mejor experiencia de juego, conecte su control' ⚠️");
+            return;
+        }
+        
+        // Día 2: Interior de la casa
+        if (currentDay === 2) {
+            drawHouseInterior();
+            drawPlayer(360, 330);
+            // dibujar hotspots de casa
+            HOUSE_ITEMS.forEach(item => {
+                ctx.fillStyle = "rgba(255, 215, 0, 0.4)";
+                ctx.fillRect(item.x, item.y, item.w, item.h);
+                ctx.strokeStyle = "#ffcc00";
+                ctx.lineWidth = 2;
+                ctx.strokeRect(item.x, item.y, item.w, item.h);
+                ctx.fillStyle = "#fff8e7";
+                ctx.font = "10px 'Press Start 2P'";
+                ctx.fillText(item.name.substring(0, 12), item.x+5, item.y-5);
+            });
+            setDialogue(`🏠 Explora tu casa (${houseInteractions}/${HOUSE_ITEMS.length} recuerdos vistos). Haz click en los objetos brillantes.`);
+            return;
+        }
+        
+        // Día 3: Calle + esquina
+        if (currentDay === 3) {
+            drawStreetAndCorner();
+            drawPlayer(360, 330);
+            // dibujar objetos de la calle
+            STREET_ITEMS.forEach(item => {
+                ctx.fillStyle = "rgba(100, 200, 255, 0.3)";
+                ctx.fillRect(item.x, item.y, item.w, item.h);
+                ctx.strokeStyle = "#88ccff";
+                ctx.strokeRect(item.x, item.y, item.w, item.h);
+                ctx.fillStyle = "#ffffaa";
+                ctx.font = "9px 'Press Start 2P'";
+                ctx.fillText(item.name, item.x+5, item.y-5);
+            });
+            // Dibujar la piedra especial (si no reclamada aún, brilla)
+            if (!stoneClaimed) {
+                ctx.fillStyle = "rgba(255, 100, 100, 0.6)";
+                ctx.beginPath();
+                ctx.ellipse(620, 330, 40, 25, 0, 0, Math.PI*2);
+                ctx.fill();
+                ctx.fillStyle = "white";
+                ctx.font = "8px 'Press Start 2P'";
+                ctx.fillText("⭐ PIEDRA MÁGICA ⭐", 570, 310);
+            } else {
+                ctx.fillStyle = "#9e7b5c";
+                ctx.beginPath();
+                ctx.ellipse(620, 330, 35, 20, 0, 0, Math.PI*2);
+                ctx.fill();
+            }
+            let msg = "🌆 Afuera hace buen día. Camina hacia la esquina, interactúa con los recuerdos...";
+            if (!stoneClaimed) msg += " ¡Luego haz click en la piedra para tu segundo regalo!";
+            setDialogue(msg);
+            return;
+        }
+        
+        // Día terminado / final
+        if (currentDay > 3) {
+            drawCelebration();
+            setDialogue("🎉 ¡Has completado todos los regalos! 🎉\nGracias por jugar. Te quiero muchísimo. ❤️");
+            return;
+        }
+        
+        // Fallback
+        drawBedroom();
+    }
+    
+    // ------------------ DIBUJOS DE FONDOS ------------------
+    function drawBedroom() {
+        ctx.fillStyle = "#4a3b2c";
+        ctx.fillRect(0, 0, 720, 400);
+        ctx.fillStyle = "#8b5a2b";
+        ctx.fillRect(0, 280, 720, 120); // piso
+        ctx.fillStyle = "#c2a16b";
+        ctx.fillRect(100, 230, 200, 100); // cama
+        ctx.fillStyle = "#e0c68b";
+        ctx.fillRect(110, 210, 180, 30); // almohada
+        ctx.fillStyle = "#754c24";
+        ctx.fillRect(40, 350, 80, 50); // mesita
+        ctx.fillStyle = "#f4e3c6";
+        ctx.font = "12px 'Press Start 2P'";
+        ctx.fillText("🛌 CAMA", 150, 270);
+    }
+    
+    function drawHouseInterior() {
+        ctx.fillStyle = "#d9c5a7";
+        ctx.fillRect(0, 0, 720, 400);
+        ctx.fillStyle = "#b68b5c";
+        ctx.fillRect(0, 320, 720, 80); // piso madera
+        // muebles genéricos
+        ctx.fillStyle = "#b08968";
+        ctx.fillRect(0, 180, 100, 150);
+        ctx.fillStyle = "#e3b87c";
+        ctx.fillRect(600, 200, 100, 130);
+        ctx.fillStyle = "#8ba36b";
+        ctx.fillRect(300, 250, 120, 90); // sillón
+        ctx.fillStyle = "#ffd966";
+        ctx.font = "14px 'Press Start 2P'";
+        ctx.fillText("🏡 SALA", 310, 30);
+    }
+    
+    function drawStreetAndCorner() {
+        ctx.fillStyle = "#5f8b4c";
+        ctx.fillRect(0, 0, 720, 400);
+        ctx.fillStyle = "#8cba6b";
+        ctx.fillRect(0, 300, 720, 100); // pasto
+        ctx.fillStyle = "#5a5a5a";
+        ctx.fillRect(0, 320, 720, 20); // vereda
+        ctx.fillStyle = "#3e6b2f";
+        for(let i=0;i<5;i++) ctx.fillRect(50+i*130, 220, 30, 70);
+        // piedra
+        ctx.fillStyle = "#9c7c5b";
+        ctx.beginPath();
+        ctx.ellipse(620, 340, 30, 18, 0, 0, Math.PI*2);
+        ctx.fill();
+        ctx.fillStyle = "#ffffbb";
+        ctx.font = "10px 'Press Start 2P'";
+        ctx.fillText("⛰️ ESQUINA", 570, 360);
+    }
+    
+    function drawCelebration() {
+        ctx.fillStyle = "#1a3a4a";
+        ctx.fillRect(0,0,720,400);
+        ctx.fillStyle = "gold";
+        ctx.font = "18px 'Press Start 2P'";
+        ctx.fillText("🌟 ¡MISIÓN CUMPLIDA! 🌟", 180, 180);
+        ctx.fillStyle = "white";
+        ctx.font = "12px 'Press Start 2P'";
+        ctx.fillText("Todos los regalos entregados con amor", 180, 260);
+    }
+    
+    function drawPlayer(x, y) {
+        // Personaje pixel (parecido a él)
+        ctx.fillStyle = "#ffcc99";
+        ctx.fillRect(x-12, y-25, 24, 30);
+        ctx.fillStyle = "#2c2c2c";
+        ctx.fillRect(x-5, y-35, 10, 12); // pelo
+        ctx.fillStyle = "white";
+        ctx.fillRect(x-7, y-20, 6, 6);
+        ctx.fillRect(x+1, y-20, 6, 6);
+        ctx.fillStyle = "#000";
+        ctx.fillRect(x-6, y-19, 3, 3);
+        ctx.fillRect(x+2, y-19, 3, 3);
+        ctx.fillStyle = "#ff7b5c";
+        ctx.fillRect(x-3, y-10, 6, 5); // sonrisa
+        // gorro o detalle
+        ctx.fillStyle = "#e34234";
+        ctx.fillRect(x-15, y-38, 30, 8);
+    }
+    
+    // ------------------ INTERACCIÓN CON CLICKS ------------------
+    function handleCanvasClick(e) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const mouseX = (e.clientX - rect.left) * scaleX;
+        const mouseY = (e.clientY - rect.top) * scaleY;
+        
+        // Día 1: sorpresa control
+        if (currentDay === 1 && !surpriseDone) {
+            // solo damos opción mediante botón, pero por si acaso clic en cama
+            setDialogue("Haz click en el botón 'No tengo un control' para recibir tu sorpresa.");
+            return;
+        }
+        
+        // Día 2: casa
+        if (currentDay === 2) {
+            for (let i=0; i<HOUSE_ITEMS.length; i++) {
+                const item = HOUSE_ITEMS[i];
+                if (mouseX > item.x && mouseX < item.x+item.w && mouseY > item.y && mouseY < item.y+item.h) {
+                    if (!item.visited) {
+                        item.visited = true;
+                        houseInteractions++;
+                        saveGame();
+                        setDialogue(item.message);
+                        // mostramos también una notificación
+                        giftStatusSpan.innerHTML = `📖 Recuerdos: ${houseInteractions}/${HOUSE_ITEMS.length}`;
+                        drawScene();
+                    } else {
+                        setDialogue("Ya viste este recuerdo. ❤️", false);
                     }
-                    
-                    mapContainer.appendChild(cell);
+                    return;
                 }
             }
+            setDialogue("Haz click en algún objeto brillante (estante, planta o cuadro) para descubrir poemas y fotos.");
+            return;
         }
-
-        // Lógica de movimiento y verificación de colisión con eventos
-        function move(dx, dy) {
-            let newX = player.x + dx;
-            let newY = player.y + dy;
-
-            // Evitar que se salga de los bordes del mapa
-            if (newX >= 0 && newX < GRID_SIZE && newY >= 0 && newY < GRID_SIZE) {
-                player.x = newX;
-                player.y = newY;
-                drawMap();
-                checkEvent(newX, newY);
-            }
-        }
-
-        function checkEvent(x, y) {
-            const loc = locations[`${x},${y}`];
-            if (loc) {
-                document.getElementById('modal-title').innerText = loc.title;
-                document.getElementById('modal-text').innerText = loc.text;
-                document.getElementById('modal-event').classList.add('active');
-            }
-        }
-
-        function closeModal() {
-            document.getElementById('modal-event').classList.remove('active');
-        }
-
-        // --- ENTRADA 1: Teclado convencional (Por si acaso) ---
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowUp') move(0, -1);
-            if (e.key === 'ArrowDown') move(0, 1);
-            if (e.key === 'ArrowLeft') move(-1, 0);
-            if (e.key === 'ArrowRight') move(1, 0);
-        });
-
-        // --- ENTRADA 2: Gamepad API (El Control 8BitDo) ---
-        let gamepadIndex = null;
-        let lastInputTime = 0;
-
-        window.addEventListener("gamepadconnected", (e) => {
-            gamepadIndex = e.gamepad.index;
-            document.getElementById('status').innerHTML = "🎮 ¡8BITDO DETECTADO!<br>Usá la cruz (D-Pad) para mover al personaje.";
-            rpgLoop();
-        });
-
-        window.addEventListener("gamepaddisconnected", () => {
-            gamepadIndex = null;
-            document.getElementById('status').innerText = "❌ CONTROL DESCONECTADO";
-        });
-
-        function rpgLoop() {
-            if (gamepadIndex === null) return;
-            const gp = navigator.getGamepads()[gamepadIndex];
-            const now = performance.now();
-
-            // Evitar que el personaje se mueva a la velocidad de la luz (Cooldown de 200ms)
-            if (now - lastInputTime > 200) {
-                // Mapeo estándar de la cruz dirección (D-Pad)
-                if (gp.buttons[12].pressed) { move(0, -1); lastInputTime = now; } // Arriba
-                if (gp.buttons[13].pressed) { move(0, 1);  lastInputTime = now; } // Abajo
-                if (gp.buttons[14].pressed) { move(-1, 0); lastInputTime = now; } // Izquierda
-                if (gp.buttons[15].pressed) { move(1, 0);  lastInputTime = now; } // Derecha
-
-                // Botón B (Mapeo estándar suele ser botón 0 o 1) para cerrar carteles
-                if (gp.buttons[0].pressed || gp.buttons[1].pressed) {
-                    closeModal();
-                    lastInputTime = now;
+        
+        // Día 3: calle y esquina
+        if (currentDay === 3) {
+            // Objetos calle
+            for (let i=0; i<STREET_ITEMS.length; i++) {
+                const obj = STREET_ITEMS[i];
+                if (mouseX > obj.x && mouseX < obj.x+obj.w && mouseY > obj.y && mouseY < obj.y+obj.h) {
+                    if (!obj.visited) {
+                        obj.visited = true;
+                        streetInteractions++;
+                        saveGame();
+                        setDialogue(obj.message);
+                        giftStatusSpan.innerHTML = `🌿 Recuerdos calle: ${streetInteractions}/${STREET_ITEMS.length}`;
+                        drawScene();
+                    } else {
+                        setDialogue("Ya recordaste ese momento especial.", false);
+                    }
+                    return;
                 }
             }
-
-            requestAnimationFrame(rpgLoop);
+            // Piedra especial (regalo 2)
+            if (!stoneClaimed && mouseX > 580 && mouseX < 670 && mouseY > 310 && mouseY < 360) {
+                stoneClaimed = true;
+                saveGame();
+                setDialogue(STONE_GIFT_MESSAGE + "\n🎁 ¡Segundo regalo desbloqueado! (Beyblade / funda) ¡Entrégaselo hoy!");
+                giftStatusSpan.innerHTML = "🎁 ¡Regalo #2 listo!";
+                drawScene();
+                return;
+            }
+            setDialogue("Explora la calle y luego haz click en la PIEDRA de la esquina para el siguiente regalo.");
         }
-
-        // Iniciar el mapa por primera vez
-        drawMap();
-    </script>
+    }
+    
+    // ------------------ AVANZAR DE DÍA (DAR REGALO FÍSICO) ------------------
+    function nextDay() {
+        // Condiciones para pasar al siguiente día
+        if (currentDay === 1 && !surpriseDone) {
+            setDialogue("Antes debes recibir la sorpresa del control. Haz click en 'No tengo un control' (ver abajo).");
+            return;
+        }
+        if (currentDay === 2 && houseInteractions < HOUSE_ITEMS.length) {
+            setDialogue(`Aún no has visto todos los recuerdos de casa (${houseInteractions}/${HOUSE_ITEMS.length}). Interactúa con todos antes de terminar el día.`);
+            return;
+        }
+        if (currentDay === 3 && !stoneClaimed) {
+            setDialogue("Debes reclamar el segundo regalo en la piedra de la esquina. ¡Haz click en la piedra brillante!");
+            return;
+        }
+        
+        // Avanzar día
+        if (currentDay === 1 && surpriseDone) {
+            currentDay = 2;
+            saveGame();
+            setDialogue("🌟 ¡Has recibido el control! Mañana explorarás la casa. 🌟\n(Se abre nueva zona con fotos y poemas)");
+            giftStatusSpan.innerHTML = "🎁 Regalo 1 (control) entregado. Siguiente: casa";
+            drawScene();
+            updateUI();
+            return;
+        }
+        if (currentDay === 2 && houseInteractions >= HOUSE_ITEMS.length) {
+            currentDay = 3;
+            saveGame();
+            setDialogue("🚪 Sales de casa hacia la calle... Mañana llegarás a la esquina. ¡No olvides el segundo regalo!");
+            giftStatusSpan.innerHTML = "🎁 ¡Prepara el segundo regalo! (Beyblade/funda)";
+            drawScene();
+            updateUI();
+            return;
+        }
+        if (currentDay === 3 && stoneClaimed) {
+            currentDay = 4;  // final
+            saveGame();
+            setDialogue("💖 ¡Aventura completada! Has recibido todos los regalos. Te amo mucho. 💖");
+            giftStatusSpan.innerHTML = "🏆 ¡Juego completado! 🏆";
+            drawScene();
+            updateUI();
+            return;
+        }
+        setDialogue("Aún no puedes avanzar. Completa las interacciones del día actual.");
+    }
+    
+    // Mostrar botón especial de sorpresa en Día 1
+    function showSurpriseButton() {
+        const panel = document.querySelector('.button-panel');
+        let surpriseBtn = document.getElementById('surpriseCtrlBtn');
+        if (!surpriseBtn && currentDay === 1 && !surpriseDone) {
+            surpriseBtn = document.createElement('button');
+            surpriseBtn.id = 'surpriseCtrlBtn';
+            surpriseBtn.className = 'pixel-btn';
+            surpriseBtn.style.background = "#ff4d4d";
+            surpriseBtn.style.color = "white";
+            surpriseBtn.innerHTML = "🎮 No tengo un control";
+            surpriseBtn.onclick = () => {
+                // Mostrar overlay de SORPRESA
+                const overlay = document.createElement('div');
+                overlay.className = 'surprise-overlay';
+                overlay.innerHTML = `<div class="surprise-text">¡SORPRESA!</div><div class="surprise-sub">✨ ¡Mira a tu lado, te tengo el controlcito! ✨</div><button class="pixel-btn" id="closeSurprise" style="margin-top:40px;">Continuar aventura</button>`;
+                document.body.appendChild(overlay);
+                document.getElementById('closeSurprise').onclick = () => {
+                    overlay.remove();
+                    surpriseDone = true;
+                    saveGame();
+                    setDialogue("🎉 ¡Tienes tu nuevo control! Ahora puedes terminar el día para continuar mañana explorando la casa.");
+                    drawScene();
+                    updateUI();
+                    // eliminar el botón de sorpresa
+                    if(surpriseBtn) surpriseBtn.remove();
+                };
+            };
+            panel.insertBefore(surpriseBtn, document.getElementById('nextDayBtn'));
+        } else if ((currentDay !== 1 || surpriseDone) && surpriseBtn) {
+            surpriseBtn.remove();
+        }
+    }
+    
+    function updateUI() {
+        dayDisplaySpan.innerHTML = `📆 DÍA ${currentDay}`;
+        if (currentDay === 1 && !surpriseDone) giftStatusSpan.innerHTML = "🎁 Sorpresa del control pendiente";
+        else if (currentDay === 2) giftStatusSpan.innerHTML = `🏠 Casa: ${houseInteractions}/${HOUSE_ITEMS.length} recuerdos`;
+        else if (currentDay === 3) giftStatusSpan.innerHTML = stoneClaimed ? "✅ Regalo de la esquina recibido" : "⛰️ Busca la piedra para el 2º regalo";
+        else giftStatusSpan.innerHTML = "✨ Aventura finalizada ✨";
+        showSurpriseButton();
+    }
+    
+    // Inicializar y cargar
+    function init() {
+        loadGame();
+        // marcar los visitados de items
+        HOUSE_ITEMS.forEach(item => item.visited = false);
+        STREET_ITEMS.forEach(item => item.visited = false);
+        if (houseInteractions > 0) {
+            for(let i=0; i<houseInteractions && i<HOUSE_ITEMS.length; i++) HOUSE_ITEMS[i].visited = true;
+        }
+        if (streetInteractions > 0) {
+            for(let i=0; i<streetInteractions && i<STREET_ITEMS.length; i++) STREET_ITEMS[i].visited = true;
+        }
+        canvas.addEventListener('click', handleCanvasClick);
+        document.getElementById('nextDayBtn').addEventListener('click', nextDay);
+        document.getElementById('resetBtn').addEventListener('click', resetGame);
+        drawScene();
+        updateUI();
+    }
+    
+    init();
+</script>
 </body>
 </html>
