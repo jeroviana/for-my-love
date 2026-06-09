@@ -3,584 +3,584 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Aventura Pokémon - Regalos para mi novio</title>
+    <title>PokéAventura · Los regalos de tu amor</title>
     <style>
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
             user-select: none;
         }
 
         body {
-            background: #1a2a32;
+            background: linear-gradient(145deg, #2b3b2c 0%, #1d2a1e 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
             font-family: 'Press Start 2P', 'Courier New', monospace;
-            margin: 0;
             padding: 20px;
         }
 
-        /* Fuente pixelada */
+        /* Fuente retro */
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-        .game-container {
-            background: #0f0f0f;
+        /* Contenedor principal estilo GameBoy Advance */
+        .gameboy {
+            background: #302d28;
+            border-radius: 32px;
+            padding: 20px 20px 24px;
+            box-shadow: 0 16px 28px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+            border: 1px solid #5e5b55;
+        }
+
+        .screen {
+            background: #a8d08d;
             border-radius: 20px;
             padding: 12px;
-            box-shadow: 0 10px 0 #000;
-            border: 3px solid #5a5a5a;
+            box-shadow: inset 0 0 0 3px #4a6741, 0 8px 0 #2c3e2b;
         }
 
         canvas {
             display: block;
             margin: 0 auto;
-            cursor: pointer;
+            border-radius: 12px;
             image-rendering: crisp-edges;
             image-rendering: pixelated;
             image-rendering: pixelated;
-            background-color: #7c9c5e;
+            background-color: #84b36b;
+            cursor: pointer;
+            width: 100%;
+            height: auto;
+            max-width: 720px;
+            aspect-ratio: 720 / 400;
         }
 
-        .dialogue-box {
-            background: #2c2c2c;
-            border-top: 4px solid #ffcb05;
-            border-bottom: 4px solid #ffcb05;
-            padding: 12px;
-            margin-top: 12px;
-            color: #f8f8f8;
-            font-size: 12px;
-            line-height: 1.5;
+        /* Panel de diálogo tipo Pokémon */
+        .dialog-panel {
+            background: #f9f3e2;
+            border-radius: 24px;
+            margin-top: 18px;
+            padding: 16px 20px;
+            border: 3px solid #4a3920;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.1), 0 4px 0 #836e4a;
             font-family: 'Press Start 2P', monospace;
-            text-shadow: 2px 2px 0 #1a1a1a;
+            font-size: 11px;
+            line-height: 1.5;
+            color: #2c2b26;
+            text-shadow: 1px 1px 0px rgba(255,255,200,0.8);
+            letter-spacing: 0.5px;
         }
 
-        .button-panel {
+        .button-bar {
             display: flex;
             gap: 12px;
             justify-content: center;
-            margin-top: 12px;
+            margin-top: 20px;
             flex-wrap: wrap;
         }
 
+        /* Botones con estilo Nintendo */
         .pixel-btn {
-            background: #ffcb05;
+            background: #f5bc70;
             border: none;
             font-family: 'Press Start 2P', monospace;
-            font-size: 12px;
-            padding: 10px 16px;
-            color: #2c2c2c;
-            box-shadow: 0 4px 0 #b97f10;
+            font-size: 11px;
+            padding: 10px 20px;
+            border-radius: 40px;
+            color: #2d2418;
+            box-shadow: 0 5px 0 #b46f2a;
             cursor: pointer;
             transition: 0.05s linear;
-            border-radius: 8px;
+            font-weight: bold;
         }
 
         .pixel-btn:active {
-            transform: translateY(4px);
-            box-shadow: none;
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #b46f2a;
         }
 
-        .surprise-overlay {
+        .btn-primary {
+            background: #6fcf97;
+            box-shadow: 0 5px 0 #2c6e4f;
+            color: #1e3a2f;
+        }
+
+        .btn-danger {
+            background: #e67e5c;
+            box-shadow: 0 5px 0 #a33f22;
+            color: white;
+        }
+
+        .info-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            padding: 0 8px;
+        }
+
+        .badge {
+            background: #2c2b26;
+            color: #ffe484;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 9px;
+            font-family: 'Press Start 2P', monospace;
+            box-shadow: inset 0 0 0 1px #ffdf8c, 0 2px 0 #00000055;
+        }
+
+        /* Overlay de SORPRESA con estilo épico */
+        .surprise-modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: black;
+            background: radial-gradient(circle, #ff2266, #220000);
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
             flex-direction: column;
+            z-index: 2000;
             font-family: 'Press Start 2P', monospace;
-            animation: flash 0.3s infinite alternate;
+            animation: flicker 0.2s infinite;
         }
 
         .surprise-text {
-            font-size: 64px;
-            color: #ff3a3a;
-            text-shadow: 6px 6px 0 #ffcb05;
+            font-size: 56px;
+            color: #fff44f;
+            text-shadow: 8px 8px 0 #d40000;
             letter-spacing: 8px;
-            animation: shake 0.2s infinite;
+            animation: bounce 0.4s ease infinite alternate;
         }
 
-        .surprise-sub {
-            margin-top: 30px;
-            color: white;
+        @keyframes bounce {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); text-shadow: 12px 12px 0 #a10000; }
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.98; }
+            100% { opacity: 1; background: radial-gradient(circle, #ff3366, #330000); }
+        }
+
+        .close-surprise {
+            background: #ffde9c;
+            border: none;
+            padding: 12px 28px;
             font-size: 14px;
-        }
-
-        @keyframes flash {
-            from { background-color: black; }
-            to { background-color: #440000; }
-        }
-
-        @keyframes shake {
-            0% { transform: translate(1px, 1px); }
-            100% { transform: translate(-1px, -1px); }
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .day-info {
-            background: #2c2c2c;
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            margin-bottom: 8px;
-            font-size: 10px;
-            color: #ffcb05;
+            margin-top: 40px;
+            border-radius: 60px;
+            font-family: 'Press Start 2P', monospace;
+            font-weight: bold;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-<div>
-    <div class="game-container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <div class="day-info" id="dayDisplay">DÍA 1</div>
-            <div class="day-info" id="giftStatus">🎁 Regalo pendiente</div>
-        </div>
-        <canvas id="gameCanvas" width="720" height="400" style="width:100%; height:auto; max-width:720px; aspect-ratio:720/400"></canvas>
-        <div class="dialogue-box" id="dialogue">
-            ✨ ¡Haz click en los objetos brillantes! ✨
-        </div>
-        <div class="button-panel">
-            <button class="pixel-btn" id="resetBtn">🔁 Reiniciar aventura</button>
-            <button class="pixel-btn" id="nextDayBtn" style="background:#4caf50; color:white;">🌙 Terminar día / Siguiente regalo</button>
-        </div>
+<div class="gameboy">
+    <div class="info-bar">
+        <div class="badge" id="dayBadge">📅 DÍA 1</div>
+        <div class="badge" id="giftBadge">🎁 REGALO: ??</div>
+    </div>
+    <div class="screen">
+        <canvas id="gameCanvas" width="720" height="400"></canvas>
+    </div>
+    <div class="dialog-panel" id="dialogBox">
+        💬 ¡Bienvenido, aventurero! Toque los objetos brillantes ✨
+    </div>
+    <div class="button-bar">
+        <button class="pixel-btn btn-danger" id="resetBtn">🔁 REINICIAR</button>
+        <button class="pixel-btn btn-primary" id="nextDayBtn">🌙 PASAR DÍA / REGALO</button>
     </div>
 </div>
 
 <script>
-    // --------------------------------------------------------------
-    //  CONFIGURACIÓN DE LA AVENTURA (¡Personaliza aquí!)
-    // --------------------------------------------------------------
-    // Los poemas, fotos y mensajes que aparecerán.
-    // Puedes cambiar textos, agregar imágenes o links.
+    // ============================================================
+    //  🎮 JUEGO CON ESTÉTICA POKÉMON MEJORADA 💖
+    // ============================================================
     
-    const HOUSE_ITEMS = [
-        { name: "📚 Estante de libros", x: 120, y: 220, w: 70, h: 80, 
-          message: "📖 *Poema encontrado*:\n\"Tus ojos son dos constelaciones,\nen ellas me pierdo cada noche.\"\n\n(Adjunto: foto de ustedes leyendo juntos)" },
-        { name: "🪴 Maceta con una planta", x: 580, y: 250, w: 50, h: 60,
-          message: "🌱 *Recuerdo*: La planta que regamos aquel día de lluvia.\nFoto: [Ustedes sonriendo bajo la lluvia]" },
-        { name: "🖼️ Cuadro familiar", x: 380, y: 150, w: 80, h: 70,
-          message: "🖼️ Mira esta foto: ¡nuestra primera cita!\n(Siempre tan felices)" }
+    // -------- CONFIGURACIÓN DE RECUERDOS (cámbialos con amor) --------
+    const CASA_RECUERDOS = [
+        { nombre: "📖 Librero", x: 100, y: 200, w: 70, h: 90, 
+          mensaje: "📜 *Poema encontrado*:\n“Tus manos dibujan el sol en mi espalda, cada día es un verso nuevo.”\n🖼️ [Foto: ustedes leyendo en el sofá]" },
+        { nombre: "🪴 Planta del amor", x: 580, y: 250, w: 50, h: 70,
+          mensaje: "🌱 Esta planta creció con nuestras conversaciones.\n🎵 *Poema*: “Raíces como las nuestras, que florecen incluso en invierno.”\n📸 Foto: regando juntos" },
+        { nombre: "🖼️ Cuadro de la risa", x: 380, y: 140, w: 80, h: 80,
+          mensaje: "🖼️ ¡Nuestra primera foto juntos! Qué nervios.\n💌 “Ese día supe que quería contagiarme de tu risa para siempre.”" }
     ];
-    
-    const STREET_ITEMS = [
-        { name: "🌳 Árbol de la esquina", x: 150, y: 200, w: 60, h: 90,
-          message: "🍃 Bajo este árbol compartimos secretos. \nTe regalo este poema: \n\"El viento guarda nuestras risas,\ncomo este árbol guarda las estaciones.\"" },
-        { name: "💡 Farol", x: 500, y: 180, w: 40, h: 100,
-          message: "🏮 Aquí te esperaba cada tarde. \nFoto: [Tú sentada en la piedra, él llegando con una flor]" }
+
+    const CALLE_RECUERDOS = [
+        { nombre: "🌳 Árbol amigo", x: 130, y: 190, w: 70, h: 100,
+          mensaje: "🍃 *Poema del árbol*:\n“Bajo tu sombra hicimos promesas de madrugada, el viento las guardó para siempre.”\n📸 [Foto: sentados en la piedra con el árbol atrás]" },
+        { nombre: "💡 Farol de espera", x: 520, y: 170, w: 45, h: 100,
+          mensaje: "🏮 Aquí te esperaba cada tarde, con una flor en la mano.\n✨ “Tus pasos siempre fueron mi melodía favorita.”" }
     ];
-    
-    const STONE_GIFT_MESSAGE = "🎁 ¡Has llegado a nuestra piedra especial! 🎁\nReclama tu SEGUNDO REGALO: ¡una Beyblade! (El control ya lo tienes, ahora este es para tus batallas).\n💝 Te quiero mucho. 💝";
-    
-    // --------------------------------------------------------------
-    //  ESTADO DEL JUEGO Y DÍAS
-    // --------------------------------------------------------------
-    let currentDay = 1;        // 1: Sorpresa cama, 2: Casa, 3: Calle + esquina
-    let surpriseDone = false;   // si ya pasó la escena del control
-    let houseInteractions = 0;   // cuántos objetos de casa ha visto
-    let stoneClaimed = false;    // si ya reclamó el regalo de la esquina
-    let streetInteractions = 0;
-    
-    // Referencias
+
+    const REGALO_PIEDRA = "🎁 ¡Llegaste a nuestra PIEDRA MÁGICA! 🎁\n\n⭐ Reclama tu SEGUNDO REGALO ⭐\n¡Una BEYBLADE + la funda para tu tablet!\n\n💝 Te mereces todo esto y más. ¡Te quiero mucho! 💝";
+
+    // -------- ESTADO DEL JUEGO --------
+    let gameState = {
+        dia: 1,               // 1: cama, 2: casa, 3: calle, 4: final
+        sorpresaHecha: false,
+        casaVisitados: 0,
+        piedraRegaloTomado: false,
+        calleVisitados: 0
+    };
+
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
-    const dialogueBox = document.getElementById('dialogue');
-    const dayDisplaySpan = document.getElementById('dayDisplay');
-    const giftStatusSpan = document.getElementById('giftStatus');
-    
-    // Coordenadas del personaje (fijo para cada escena)
-    let playerX = 360, playerY = 330;
-    
-    // Función para guardar progreso
-    function saveGame() {
-        const save = {
-            currentDay, surpriseDone, houseInteractions, stoneClaimed, streetInteractions
+    const dialogDiv = document.getElementById('dialogBox');
+    const dayBadge = document.getElementById('dayBadge');
+    const giftBadge = document.getElementById('giftBadge');
+
+    // Guardar/cargar con localStorage
+    function guardarPartida() {
+        localStorage.setItem('pokemonAmor', JSON.stringify(gameState));
+    }
+
+    function cargarPartida() {
+        const data = localStorage.getItem('pokemonAmor');
+        if (data) {
+            try {
+                const loaded = JSON.parse(data);
+                gameState = loaded;
+                // Sincronizar estados visitados de objetos
+                CASA_RECUERDOS.forEach((item, idx) => item.visitado = idx < gameState.casaVisitados);
+                CALLE_RECUERDOS.forEach((item, idx) => item.visitado = idx < gameState.calleVisitados);
+                if (gameState.dia > 3) gameState.dia = 4;
+            } catch(e) {}
+        } else {
+            resetInterno(false);
+        }
+        actualizarUI();
+    }
+
+    function resetInterno(guardar = true) {
+        gameState = {
+            dia: 1,
+            sorpresaHecha: false,
+            casaVisitados: 0,
+            piedraRegaloTomado: false,
+            calleVisitados: 0
         };
-        localStorage.setItem('pokemonAventuraSave', JSON.stringify(save));
+        CASA_RECUERDOS.forEach(i => i.visitado = false);
+        CALLE_RECUERDOS.forEach(i => i.visitado = false);
+        if (guardar) guardarPartida();
+        actualizarUI();
+        dibujarEscena();
     }
-    
-    function loadGame() {
-        const raw = localStorage.getItem('pokemonAventuraSave');
-        if (!raw) return;
-        try {
-            const data = JSON.parse(raw);
-            currentDay = data.currentDay || 1;
-            surpriseDone = data.surpriseDone || false;
-            houseInteractions = data.houseInteractions || 0;
-            stoneClaimed = data.stoneClaimed || false;
-            streetInteractions = data.streetInteractions || 0;
-            // validación: si ya pasó día 1 y surpriseDone false por error, lo corregimos
-            if (currentDay > 1 && !surpriseDone) surpriseDone = true;
-        } catch(e) {}
+
+    function actualizarUI() {
+        if (gameState.dia === 1) dayBadge.innerText = "📅 DÍA 1 · SORPRESA";
+        else if (gameState.dia === 2) dayBadge.innerText = "📅 DÍA 2 · EXPLORA CASA";
+        else if (gameState.dia === 3) dayBadge.innerText = "📅 DÍA 3 · CALLE Y ESQUINA";
+        else dayBadge.innerText = "🏁 AVENTURA COMPLETA";
+
+        if (gameState.dia === 1 && !gameState.sorpresaHecha) giftBadge.innerText = "🎁 ¡CONTROL SORPRESA!";
+        else if (gameState.dia === 2) giftBadge.innerText = `🏠 Recuerdos: ${gameState.casaVisitados}/${CASA_RECUERDOS.length}`;
+        else if (gameState.dia === 3) giftBadge.innerText = gameState.piedraRegaloTomado ? "🎁 2º REGALO OBTENIDO" : "⛰️ Toca la piedra";
+        else giftBadge.innerText = "✨ ¡Misión cumplida! ✨";
+        
+        dibujarEscena();
+        // Mostrar/ocultar botón sorpresa
+        manejarBotonSorpresa();
     }
-    
-    function resetGame() {
-        localStorage.removeItem('pokemonAventuraSave');
-        currentDay = 1;
-        surpriseDone = false;
-        houseInteractions = 0;
-        stoneClaimed = false;
-        streetInteractions = 0;
-        dialogueBox.innerHTML = "✨ ¡Aventura reiniciada! Vuelve a empezar desde la cama ✨";
-        saveGame();
-        drawScene();
-        updateUI();
+
+    function manejarBotonSorpresa() {
+        let btnExistente = document.getElementById('sorpresaBtn');
+        if (gameState.dia === 1 && !gameState.sorpresaHecha) {
+            if (!btnExistente) {
+                const boton = document.createElement('button');
+                boton.id = 'sorpresaBtn';
+                boton.className = 'pixel-btn';
+                boton.style.background = "#ff8c5a";
+                boton.style.boxShadow = "0 5px 0 #aa4422";
+                boton.innerHTML = "🎮 ¡NO TENGO UN CONTROL!";
+                boton.onclick = mostrarSorpresaControl;
+                const barra = document.querySelector('.button-bar');
+                barra.insertBefore(boton, document.getElementById('nextDayBtn'));
+            }
+        } else {
+            if (btnExistente) btnExistente.remove();
+        }
     }
-    
-    // Mostrar diálogo bonito
-    function setDialogue(text, isError = false) {
-        dialogueBox.innerHTML = text.replace(/\n/g, '<br>');
-        if (isError) dialogueBox.style.borderTopColor = "#ff4444";
-        else dialogueBox.style.borderTopColor = "#ffcb05";
+
+    function mostrarSorpresaControl() {
+        const overlay = document.createElement('div');
+        overlay.className = 'surprise-modal';
+        overlay.innerHTML = `
+            <div class="surprise-text">¡SORPRESA!</div>
+            <div style="color:#ffdd99; margin-top:20px;">✨ ¡Mira hacia un lado, amor! ✨</div>
+            <div style="color:#fff; margin-top:10px;">🎁 ¡Aquí está tu controlcito 8bitdo! 🎁</div>
+            <button class="close-surprise" id="cerrarSorpresa">Continuar aventura ➡️</button>
+        `;
+        document.body.appendChild(overlay);
+        document.getElementById('cerrarSorpresa').onclick = () => {
+            overlay.remove();
+            gameState.sorpresaHecha = true;
+            guardarPartida();
+            dialogDiv.innerHTML = "💖 ¡Control entregado! Ahora puedes terminar el día y mañana explorar la casa llena de recuerdos. 💖";
+            actualizarUI();
+        };
     }
-    
-    // Dibujar cada escenario
-    function drawScene() {
+
+    // -------------------- DIBUJOS ESTILO POKÉMON MEJORADO --------------------
+    function dibujarEscena() {
         ctx.clearRect(0, 0, 720, 400);
         
-        // Día 1: habitación (cama)
-        if (currentDay === 1 && !surpriseDone) {
-            drawBedroom();
-            drawPlayer(30, 310); // personaje acostado / sentado
-            setDialogue("💤 Estás en tu cama. Aparece un mensaje:\n⚠️ 'Para una mejor experiencia de juego, conecte su control' ⚠️");
+        if (gameState.dia === 1 && !gameState.sorpresaHecha) {
+            dibujarHabitacionCama();
+            dibujarPersonaje(360, 310, "dormido");
+            dialogDiv.innerHTML = "💤 Estás en la cama... Aparece un mensaje:\n⚠️ “Para una mejor experiencia, conecta tu control” ⚠️";
             return;
         }
-        
-        // Día 2: Interior de la casa
-        if (currentDay === 2) {
-            drawHouseInterior();
-            drawPlayer(360, 330);
-            // dibujar hotspots de casa
-            HOUSE_ITEMS.forEach(item => {
-                ctx.fillStyle = "rgba(255, 215, 0, 0.4)";
+        if (gameState.dia === 2) {
+            dibujarInteriorCasa();
+            dibujarPersonaje(360, 330, "normal");
+            CASA_RECUERDOS.forEach(item => {
+                ctx.fillStyle = "rgba(255, 215, 120, 0.5)";
                 ctx.fillRect(item.x, item.y, item.w, item.h);
-                ctx.strokeStyle = "#ffcc00";
-                ctx.lineWidth = 2;
+                ctx.strokeStyle = "#f7d44a";
+                ctx.lineWidth = 2.5;
                 ctx.strokeRect(item.x, item.y, item.w, item.h);
-                ctx.fillStyle = "#fff8e7";
-                ctx.font = "10px 'Press Start 2P'";
-                ctx.fillText(item.name.substring(0, 12), item.x+5, item.y-5);
-            });
-            setDialogue(`🏠 Explora tu casa (${houseInteractions}/${HOUSE_ITEMS.length} recuerdos vistos). Haz click en los objetos brillantes.`);
-            return;
-        }
-        
-        // Día 3: Calle + esquina
-        if (currentDay === 3) {
-            drawStreetAndCorner();
-            drawPlayer(360, 330);
-            // dibujar objetos de la calle
-            STREET_ITEMS.forEach(item => {
-                ctx.fillStyle = "rgba(100, 200, 255, 0.3)";
-                ctx.fillRect(item.x, item.y, item.w, item.h);
-                ctx.strokeStyle = "#88ccff";
-                ctx.strokeRect(item.x, item.y, item.w, item.h);
-                ctx.fillStyle = "#ffffaa";
+                ctx.fillStyle = "#2f2e2a";
                 ctx.font = "9px 'Press Start 2P'";
-                ctx.fillText(item.name, item.x+5, item.y-5);
+                ctx.fillText(item.nombre, item.x+5, item.y-6);
             });
-            // Dibujar la piedra especial (si no reclamada aún, brilla)
-            if (!stoneClaimed) {
-                ctx.fillStyle = "rgba(255, 100, 100, 0.6)";
-                ctx.beginPath();
-                ctx.ellipse(620, 330, 40, 25, 0, 0, Math.PI*2);
-                ctx.fill();
-                ctx.fillStyle = "white";
+            return;
+        }
+        if (gameState.dia === 3) {
+            dibujarCalleYEsquina();
+            dibujarPersonaje(360, 330, "caminando");
+            CALLE_RECUERDOS.forEach(item => {
+                ctx.fillStyle = "rgba(80, 180, 255, 0.4)";
+                ctx.fillRect(item.x, item.y, item.w, item.h);
+                ctx.strokeStyle = "#bbe2ff";
+                ctx.strokeRect(item.x, item.y, item.w, item.h);
+                ctx.fillStyle = "#2c2c1e";
                 ctx.font = "8px 'Press Start 2P'";
-                ctx.fillText("⭐ PIEDRA MÁGICA ⭐", 570, 310);
-            } else {
-                ctx.fillStyle = "#9e7b5c";
+                ctx.fillText(item.nombre, item.x+4, item.y-5);
+            });
+            // Piedra especial
+            if (!gameState.piedraRegaloTomado) {
+                ctx.fillStyle = "#ffb347";
                 ctx.beginPath();
-                ctx.ellipse(620, 330, 35, 20, 0, 0, Math.PI*2);
+                ctx.ellipse(635, 335, 38, 22, 0, 0, Math.PI*2);
+                ctx.fill();
+                ctx.fillStyle = "#ffffff";
+                ctx.shadowBlur = 0;
+                ctx.font = "10px 'Press Start 2P'";
+                ctx.fillText("⭐ PIEDRA DEL RECUERDO ⭐", 570, 310);
+                ctx.fillStyle = "#ffefb0";
+                ctx.font = "8px monospace";
+                ctx.fillText("✨ Haz click ✨", 615, 355);
+            } else {
+                ctx.fillStyle = "#9b7e64";
+                ctx.beginPath();
+                ctx.ellipse(635, 335, 35, 18, 0, 0, Math.PI*2);
                 ctx.fill();
             }
-            let msg = "🌆 Afuera hace buen día. Camina hacia la esquina, interactúa con los recuerdos...";
-            if (!stoneClaimed) msg += " ¡Luego haz click en la piedra para tu segundo regalo!";
-            setDialogue(msg);
             return;
         }
-        
-        // Día terminado / final
-        if (currentDay > 3) {
-            drawCelebration();
-            setDialogue("🎉 ¡Has completado todos los regalos! 🎉\nGracias por jugar. Te quiero muchísimo. ❤️");
-            return;
-        }
-        
-        // Fallback
-        drawBedroom();
+        // final
+        dibujarFinal();
     }
-    
-    // ------------------ DIBUJOS DE FONDOS ------------------
-    function drawBedroom() {
-        ctx.fillStyle = "#4a3b2c";
+
+    function dibujarHabitacionCama() {
+        ctx.fillStyle = "#3c2b1f";
         ctx.fillRect(0, 0, 720, 400);
-        ctx.fillStyle = "#8b5a2b";
-        ctx.fillRect(0, 280, 720, 120); // piso
-        ctx.fillStyle = "#c2a16b";
-        ctx.fillRect(100, 230, 200, 100); // cama
-        ctx.fillStyle = "#e0c68b";
-        ctx.fillRect(110, 210, 180, 30); // almohada
-        ctx.fillStyle = "#754c24";
-        ctx.fillRect(40, 350, 80, 50); // mesita
-        ctx.fillStyle = "#f4e3c6";
+        ctx.fillStyle = "#ad8b67";
+        ctx.fillRect(0, 280, 720, 120);
+        // cama detallada
+        ctx.fillStyle = "#5e4233";
+        ctx.fillRect(100, 200, 200, 100);
+        ctx.fillStyle = "#c99e6f";
+        ctx.fillRect(110, 185, 180, 25);
+        ctx.fillStyle = "#e5caa4";
+        ctx.fillRect(120, 215, 80, 30);
+        // ventana
+        ctx.fillStyle = "#87CEEB";
+        ctx.fillRect(550, 80, 100, 100);
+        ctx.fillStyle = "#d4b68a";
+        ctx.fillRect(560, 90, 80, 80);
+        ctx.fillStyle = "#fbe8c8";
         ctx.font = "12px 'Press Start 2P'";
-        ctx.fillText("🛌 CAMA", 150, 270);
+        ctx.fillText("🛏️", 140, 260);
     }
-    
-    function drawHouseInterior() {
-        ctx.fillStyle = "#d9c5a7";
+
+    function dibujarInteriorCasa() {
+        ctx.fillStyle = "#dfcca6";
         ctx.fillRect(0, 0, 720, 400);
-        ctx.fillStyle = "#b68b5c";
-        ctx.fillRect(0, 320, 720, 80); // piso madera
-        // muebles genéricos
-        ctx.fillStyle = "#b08968";
-        ctx.fillRect(0, 180, 100, 150);
-        ctx.fillStyle = "#e3b87c";
-        ctx.fillRect(600, 200, 100, 130);
-        ctx.fillStyle = "#8ba36b";
-        ctx.fillRect(300, 250, 120, 90); // sillón
-        ctx.fillStyle = "#ffd966";
-        ctx.font = "14px 'Press Start 2P'";
-        ctx.fillText("🏡 SALA", 310, 30);
+        ctx.fillStyle = "#bb9b6e";
+        ctx.fillRect(0, 310, 720, 90);
+        // muebles simpáticos
+        ctx.fillStyle = "#cb9e6b";
+        ctx.fillRect(20, 210, 100, 120);
+        ctx.fillStyle = "#9cb068";
+        ctx.fillRect(620, 230, 80, 100);
+        ctx.fillStyle = "#d6b576";
+        ctx.fillRect(280, 260, 130, 70);
+        // cuadros y decoración
+        ctx.fillStyle = "#f5e3c1";
+        ctx.fillRect(460, 100, 80, 60);
+        ctx.fillStyle = "#00000033";
+        ctx.fillRect(475, 115, 50, 30);
+        ctx.fillStyle = "#f3cf7a";
+        ctx.font = "16px monospace";
+        ctx.fillText("🏡 Hogar", 330, 60);
     }
-    
-    function drawStreetAndCorner() {
-        ctx.fillStyle = "#5f8b4c";
+
+    function dibujarCalleYEsquina() {
+        ctx.fillStyle = "#6f9e4f";
         ctx.fillRect(0, 0, 720, 400);
-        ctx.fillStyle = "#8cba6b";
-        ctx.fillRect(0, 300, 720, 100); // pasto
-        ctx.fillStyle = "#5a5a5a";
-        ctx.fillRect(0, 320, 720, 20); // vereda
-        ctx.fillStyle = "#3e6b2f";
-        for(let i=0;i<5;i++) ctx.fillRect(50+i*130, 220, 30, 70);
-        // piedra
-        ctx.fillStyle = "#9c7c5b";
+        ctx.fillStyle = "#c9ae7a";
+        ctx.fillRect(0, 310, 720, 40);
+        ctx.fillStyle = "#4e6b2f";
+        for(let i=0;i<6;i++) ctx.fillRect(40+i*110, 220, 25, 70);
+        ctx.fillStyle = "#e4c27a";
         ctx.beginPath();
-        ctx.ellipse(620, 340, 30, 18, 0, 0, Math.PI*2);
+        ctx.ellipse(635, 335, 35, 18, 0, 0, Math.PI*2);
         ctx.fill();
-        ctx.fillStyle = "#ffffbb";
-        ctx.font = "10px 'Press Start 2P'";
-        ctx.fillText("⛰️ ESQUINA", 570, 360);
+        ctx.fillStyle = "#ffffffb3";
+        ctx.font = "9px 'Press Start 2P'";
+        ctx.fillText("🌇 Nuestra esquina", 520, 290);
     }
-    
-    function drawCelebration() {
-        ctx.fillStyle = "#1a3a4a";
+
+    function dibujarFinal() {
+        ctx.fillStyle = "#14211f";
         ctx.fillRect(0,0,720,400);
-        ctx.fillStyle = "gold";
+        ctx.fillStyle = "#ffd966";
         ctx.font = "18px 'Press Start 2P'";
-        ctx.fillText("🌟 ¡MISIÓN CUMPLIDA! 🌟", 180, 180);
-        ctx.fillStyle = "white";
-        ctx.font = "12px 'Press Start 2P'";
-        ctx.fillText("Todos los regalos entregados con amor", 180, 260);
+        ctx.fillText("🌟 ¡FELICIDADES! 🌟", 210, 180);
+        ctx.fillStyle = "#f0e6a0";
+        ctx.font = "12px monospace";
+        ctx.fillText("Has recibido todos los regalos", 210, 250);
+        ctx.fillText("Te amo más que a un Pokémon shiny", 190, 310);
     }
-    
-    function drawPlayer(x, y) {
-        // Personaje pixel (parecido a él)
-        ctx.fillStyle = "#ffcc99";
-        ctx.fillRect(x-12, y-25, 24, 30);
-        ctx.fillStyle = "#2c2c2c";
-        ctx.fillRect(x-5, y-35, 10, 12); // pelo
-        ctx.fillStyle = "white";
-        ctx.fillRect(x-7, y-20, 6, 6);
-        ctx.fillRect(x+1, y-20, 6, 6);
-        ctx.fillStyle = "#000";
-        ctx.fillRect(x-6, y-19, 3, 3);
-        ctx.fillRect(x+2, y-19, 3, 3);
-        ctx.fillStyle = "#ff7b5c";
-        ctx.fillRect(x-3, y-10, 6, 5); // sonrisa
-        // gorro o detalle
-        ctx.fillStyle = "#e34234";
-        ctx.fillRect(x-15, y-38, 30, 8);
+
+    function dibujarPersonaje(x, y, anim) {
+        // Personaje adorable estilo chico pixel
+        ctx.fillStyle = "#fdcc8a";
+        ctx.fillRect(x-12, y-28, 24, 30);
+        ctx.fillStyle = "#5e3a1f";
+        ctx.fillRect(x-6, y-39, 12, 12);
+        ctx.fillStyle = "#fff2df";
+        ctx.fillRect(x-8, y-22, 7, 7);
+        ctx.fillRect(x+1, y-22, 7, 7);
+        ctx.fillStyle = "#1e2f3a";
+        ctx.fillRect(x-7, y-20, 4, 4);
+        ctx.fillRect(x+2, y-20, 4, 4);
+        ctx.fillStyle = "#d9692e";
+        ctx.fillRect(x-3, y-13, 6, 5);
+        // gorra o moño
+        ctx.fillStyle = "#c53a1f";
+        ctx.fillRect(x-14, y-42, 28, 9);
+        if (anim === "caminando") {
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(x+8, y-20, 5, 5);
+        }
     }
-    
-    // ------------------ INTERACCIÓN CON CLICKS ------------------
-    function handleCanvasClick(e) {
+
+    // -------------------- INTERACCIONES --------------------
+    function manejarClickCanvas(e) {
         const rect = canvas.getBoundingClientRect();
         const scaleX = canvas.width / rect.width;
         const scaleY = canvas.height / rect.height;
-        const mouseX = (e.clientX - rect.left) * scaleX;
-        const mouseY = (e.clientY - rect.top) * scaleY;
+        const clickX = (e.clientX - rect.left) * scaleX;
+        const clickY = (e.clientY - rect.top) * scaleY;
         
-        // Día 1: sorpresa control
-        if (currentDay === 1 && !surpriseDone) {
-            // solo damos opción mediante botón, pero por si acaso clic en cama
-            setDialogue("Haz click en el botón 'No tengo un control' para recibir tu sorpresa.");
-            return;
-        }
-        
-        // Día 2: casa
-        if (currentDay === 2) {
-            for (let i=0; i<HOUSE_ITEMS.length; i++) {
-                const item = HOUSE_ITEMS[i];
-                if (mouseX > item.x && mouseX < item.x+item.w && mouseY > item.y && mouseY < item.y+item.h) {
-                    if (!item.visited) {
-                        item.visited = true;
-                        houseInteractions++;
-                        saveGame();
-                        setDialogue(item.message);
-                        // mostramos también una notificación
-                        giftStatusSpan.innerHTML = `📖 Recuerdos: ${houseInteractions}/${HOUSE_ITEMS.length}`;
-                        drawScene();
+        if (gameState.dia === 2) {
+            for (let item of CASA_RECUERDOS) {
+                if (clickX > item.x && clickX < item.x+item.w && clickY > item.y && clickY < item.y+item.h) {
+                    if (!item.visitado) {
+                        item.visitado = true;
+                        gameState.casaVisitados++;
+                        guardarPartida();
+                        dialogDiv.innerHTML = item.mensaje.replace(/\n/g, '<br>');
+                        actualizarUI();
                     } else {
-                        setDialogue("Ya viste este recuerdo. ❤️", false);
+                        dialogDiv.innerHTML = "💭 Ya reviviste ese recuerdo. Sigue explorando 💭";
                     }
                     return;
                 }
             }
-            setDialogue("Haz click en algún objeto brillante (estante, planta o cuadro) para descubrir poemas y fotos.");
+            dialogDiv.innerHTML = "🔍 Haz click en los objetos amarillos (librero, planta o cuadro) para descubrir poemas y fotos.";
             return;
         }
         
-        // Día 3: calle y esquina
-        if (currentDay === 3) {
-            // Objetos calle
-            for (let i=0; i<STREET_ITEMS.length; i++) {
-                const obj = STREET_ITEMS[i];
-                if (mouseX > obj.x && mouseX < obj.x+obj.w && mouseY > obj.y && mouseY < obj.y+obj.h) {
-                    if (!obj.visited) {
-                        obj.visited = true;
-                        streetInteractions++;
-                        saveGame();
-                        setDialogue(obj.message);
-                        giftStatusSpan.innerHTML = `🌿 Recuerdos calle: ${streetInteractions}/${STREET_ITEMS.length}`;
-                        drawScene();
+        if (gameState.dia === 3) {
+            // interactuar con elementos de calle
+            for (let calle of CALLE_RECUERDOS) {
+                if (clickX > calle.x && clickX < calle.x+calle.w && clickY > calle.y && clickY < calle.y+calle.h) {
+                    if (!calle.visitado) {
+                        calle.visitado = true;
+                        gameState.calleVisitados++;
+                        guardarPartida();
+                        dialogDiv.innerHTML = calle.mensaje.replace(/\n/g, '<br>');
+                        actualizarUI();
                     } else {
-                        setDialogue("Ya recordaste ese momento especial.", false);
+                        dialogDiv.innerHTML = "🌿 Ese recuerdo ya lo atesoras. Busca la piedra para tu regalo.";
                     }
                     return;
                 }
             }
-            // Piedra especial (regalo 2)
-            if (!stoneClaimed && mouseX > 580 && mouseX < 670 && mouseY > 310 && mouseY < 360) {
-                stoneClaimed = true;
-                saveGame();
-                setDialogue(STONE_GIFT_MESSAGE + "\n🎁 ¡Segundo regalo desbloqueado! (Beyblade / funda) ¡Entrégaselo hoy!");
-                giftStatusSpan.innerHTML = "🎁 ¡Regalo #2 listo!";
-                drawScene();
+            // Piedra de regalo
+            if (!gameState.piedraRegaloTomado && clickX > 590 && clickX < 680 && clickY > 310 && clickY < 370) {
+                gameState.piedraRegaloTomado = true;
+                guardarPartida();
+                dialogDiv.innerHTML = REGALO_PIEDRA.replace(/\n/g, '<br>');
+                actualizarUI();
                 return;
             }
-            setDialogue("Explora la calle y luego haz click en la PIEDRA de la esquina para el siguiente regalo.");
+            dialogDiv.innerHTML = "🌆 Toca los objetos azules o la piedra naranja para tu regalo.";
         }
     }
-    
-    // ------------------ AVANZAR DE DÍA (DAR REGALO FÍSICO) ------------------
-    function nextDay() {
-        // Condiciones para pasar al siguiente día
-        if (currentDay === 1 && !surpriseDone) {
-            setDialogue("Antes debes recibir la sorpresa del control. Haz click en 'No tengo un control' (ver abajo).");
+
+    function siguienteDia() {
+        if (gameState.dia === 1 && !gameState.sorpresaHecha) {
+            dialogDiv.innerHTML = "❓ Primero recibe la sorpresa del control (botón rojo 'No tengo un control').";
             return;
         }
-        if (currentDay === 2 && houseInteractions < HOUSE_ITEMS.length) {
-            setDialogue(`Aún no has visto todos los recuerdos de casa (${houseInteractions}/${HOUSE_ITEMS.length}). Interactúa con todos antes de terminar el día.`);
+        if (gameState.dia === 2 && gameState.casaVisitados < CASA_RECUERDOS.length) {
+            dialogDiv.innerHTML = `🏠 Aún faltan recuerdos por ver (${gameState.casaVisitados}/${CASA_RECUERDOS.length}). Encuentra todos los objetos brillantes en casa.`;
             return;
         }
-        if (currentDay === 3 && !stoneClaimed) {
-            setDialogue("Debes reclamar el segundo regalo en la piedra de la esquina. ¡Haz click en la piedra brillante!");
+        if (gameState.dia === 3 && !gameState.piedraRegaloTomado) {
+            dialogDiv.innerHTML = "⛰️ Debes reclamar el segundo regalo en la piedra de la esquina. ¡Haz click en ella!";
             return;
         }
         
         // Avanzar día
-        if (currentDay === 1 && surpriseDone) {
-            currentDay = 2;
-            saveGame();
-            setDialogue("🌟 ¡Has recibido el control! Mañana explorarás la casa. 🌟\n(Se abre nueva zona con fotos y poemas)");
-            giftStatusSpan.innerHTML = "🎁 Regalo 1 (control) entregado. Siguiente: casa";
-            drawScene();
-            updateUI();
+        if (gameState.dia === 1 && gameState.sorpresaHecha) {
+            gameState.dia = 2;
+            dialogDiv.innerHTML = "🌅 ¡Nuevo día! Ahora explora la casa, toca los objetos para encontrar poemas y fotos. ❤️";
+            guardarPartida();
+            actualizarUI();
             return;
         }
-        if (currentDay === 2 && houseInteractions >= HOUSE_ITEMS.length) {
-            currentDay = 3;
-            saveGame();
-            setDialogue("🚪 Sales de casa hacia la calle... Mañana llegarás a la esquina. ¡No olvides el segundo regalo!");
-            giftStatusSpan.innerHTML = "🎁 ¡Prepara el segundo regalo! (Beyblade/funda)";
-            drawScene();
-            updateUI();
+        if (gameState.dia === 2 && gameState.casaVisitados >= CASA_RECUERDOS.length) {
+            gameState.dia = 3;
+            dialogDiv.innerHTML = "🚪 Sales de casa... Mañana el destino es la esquina donde solían sentarse. ¡No olvides reclamar tu segundo regalo!";
+            guardarPartida();
+            actualizarUI();
             return;
         }
-        if (currentDay === 3 && stoneClaimed) {
-            currentDay = 4;  // final
-            saveGame();
-            setDialogue("💖 ¡Aventura completada! Has recibido todos los regalos. Te amo mucho. 💖");
-            giftStatusSpan.innerHTML = "🏆 ¡Juego completado! 🏆";
-            drawScene();
-            updateUI();
-            return;
-        }
-        setDialogue("Aún no puedes avanzar. Completa las interacciones del día actual.");
-    }
-    
-    // Mostrar botón especial de sorpresa en Día 1
-    function showSurpriseButton() {
-        const panel = document.querySelector('.button-panel');
-        let surpriseBtn = document.getElementById('surpriseCtrlBtn');
-        if (!surpriseBtn && currentDay === 1 && !surpriseDone) {
-            surpriseBtn = document.createElement('button');
-            surpriseBtn.id = 'surpriseCtrlBtn';
-            surpriseBtn.className = 'pixel-btn';
-            surpriseBtn.style.background = "#ff4d4d";
-            surpriseBtn.style.color = "white";
-            surpriseBtn.innerHTML = "🎮 No tengo un control";
-            surpriseBtn.onclick = () => {
-                // Mostrar overlay de SORPRESA
-                const overlay = document.createElement('div');
-                overlay.className = 'surprise-overlay';
-                overlay.innerHTML = `<div class="surprise-text">¡SORPRESA!</div><div class="surprise-sub">✨ ¡Mira a tu lado, te tengo el controlcito! ✨</div><button class="pixel-btn" id="closeSurprise" style="margin-top:40px;">Continuar aventura</button>`;
-                document.body.appendChild(overlay);
-                document.getElementById('closeSurprise').onclick = () => {
-                    overlay.remove();
-                    surpriseDone = true;
-                    saveGame();
-                    setDialogue("🎉 ¡Tienes tu nuevo control! Ahora puedes terminar el día para continuar mañana explorando la casa.");
-                    drawScene();
-                    updateUI();
-                    // eliminar el botón de sorpresa
-                    if(surpriseBtn) surpriseBtn.remove();
-                };
-            };
-            panel.insertBefore(surpriseBtn, document.getElementById('nextDayBtn'));
-        } else if ((currentDay !== 1 || surpriseDone) && surpriseBtn) {
-            surpriseBtn.remove();
+        if (gameState.dia === 3 && gameState.piedraRegaloTomado) {
+            gameState.dia = 4;
+            dialogDiv.innerHTML = "🎉 ¡HAS COMPLETADO LA AVENTURA! 🎉\nRecibirás todos los regalos con mucho amor. ¡Te quiero infinito! 💖";
+            guardarPartida();
+            actualizarUI();
         }
     }
+
+    // Eventos
+    canvas.addEventListener('click', manejarClickCanvas);
+    document.getElementById('nextDayBtn').addEventListener('click', siguienteDia);
+    document.getElementById('resetBtn').addEventListener('click', () => resetInterno(true));
     
-    function updateUI() {
-        dayDisplaySpan.innerHTML = `📆 DÍA ${currentDay}`;
-        if (currentDay === 1 && !surpriseDone) giftStatusSpan.innerHTML = "🎁 Sorpresa del control pendiente";
-        else if (currentDay === 2) giftStatusSpan.innerHTML = `🏠 Casa: ${houseInteractions}/${HOUSE_ITEMS.length} recuerdos`;
-        else if (currentDay === 3) giftStatusSpan.innerHTML = stoneClaimed ? "✅ Regalo de la esquina recibido" : "⛰️ Busca la piedra para el 2º regalo";
-        else giftStatusSpan.innerHTML = "✨ Aventura finalizada ✨";
-        showSurpriseButton();
-    }
-    
-    // Inicializar y cargar
-    function init() {
-        loadGame();
-        // marcar los visitados de items
-        HOUSE_ITEMS.forEach(item => item.visited = false);
-        STREET_ITEMS.forEach(item => item.visited = false);
-        if (houseInteractions > 0) {
-            for(let i=0; i<houseInteractions && i<HOUSE_ITEMS.length; i++) HOUSE_ITEMS[i].visited = true;
-        }
-        if (streetInteractions > 0) {
-            for(let i=0; i<streetInteractions && i<STREET_ITEMS.length; i++) STREET_ITEMS[i].visited = true;
-        }
-        canvas.addEventListener('click', handleCanvasClick);
-        document.getElementById('nextDayBtn').addEventListener('click', nextDay);
-        document.getElementById('resetBtn').addEventListener('click', resetGame);
-        drawScene();
-        updateUI();
-    }
-    
-    init();
+    cargarPartida();
+    dibujarEscena();
 </script>
 </body>
 </html>
