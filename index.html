@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>PokéAventura · Los regalos de tu amor</title>
+    <title>PokéRegalos · Aventura de amor</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
         }
 
         body {
-            background: linear-gradient(145deg, #2b3b2c 0%, #1d2a1e 100%);
+            background: linear-gradient(145deg, #1a2a1f 0%, #0e1a0c 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -22,482 +22,527 @@
             padding: 20px;
         }
 
-        /* Fuente retro */
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-        /* Contenedor principal estilo GameBoy Advance */
-        .gameboy {
-            background: #302d28;
-            border-radius: 32px;
+        /* Contenedor con estilo consola portátil */
+        .consola {
+            background: #2e2b26;
+            border-radius: 40px;
             padding: 20px 20px 24px;
-            box-shadow: 0 16px 28px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
-            border: 1px solid #5e5b55;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+            border: 1px solid #5a5650;
         }
 
-        .screen {
-            background: #a8d08d;
-            border-radius: 20px;
+        .pantalla {
+            background: #7c9c5e;
+            border-radius: 24px;
             padding: 12px;
-            box-shadow: inset 0 0 0 3px #4a6741, 0 8px 0 #2c3e2b;
+            box-shadow: inset 0 0 0 4px #4a6741, 0 8px 0 #2c3e2b;
         }
 
         canvas {
             display: block;
             margin: 0 auto;
-            border-radius: 12px;
+            border-radius: 16px;
             image-rendering: crisp-edges;
             image-rendering: pixelated;
-            image-rendering: pixelated;
-            background-color: #84b36b;
-            cursor: pointer;
             width: 100%;
             height: auto;
-            max-width: 720px;
-            aspect-ratio: 720 / 400;
+            max-width: 800px;
+            aspect-ratio: 800 / 450;
+            cursor: pointer;
+            background-color: #84b36b;
         }
 
-        /* Panel de diálogo tipo Pokémon */
-        .dialog-panel {
-            background: #f9f3e2;
-            border-radius: 24px;
+        /* Caja de diálogo estilo Pokémon */
+        .cajaDialogo {
+            background: #fcf3da;
+            border-radius: 28px;
             margin-top: 18px;
-            padding: 16px 20px;
+            padding: 18px 24px;
             border: 3px solid #4a3920;
-            box-shadow: inset 0 1px 4px rgba(0,0,0,0.1), 0 4px 0 #836e4a;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.1), 0 5px 0 #836e4a;
             font-family: 'Press Start 2P', monospace;
             font-size: 11px;
-            line-height: 1.5;
-            color: #2c2b26;
-            text-shadow: 1px 1px 0px rgba(255,255,200,0.8);
-            letter-spacing: 0.5px;
+            line-height: 1.6;
+            color: #2e2b23;
+            text-shadow: 1px 1px 0 rgba(255,250,200,0.9);
         }
 
-        .button-bar {
+        .barraBotones {
             display: flex;
-            gap: 12px;
+            gap: 14px;
             justify-content: center;
-            margin-top: 20px;
+            margin-top: 22px;
             flex-wrap: wrap;
         }
 
-        /* Botones con estilo Nintendo */
-        .pixel-btn {
+        .botonPixel {
             background: #f5bc70;
             border: none;
             font-family: 'Press Start 2P', monospace;
-            font-size: 11px;
-            padding: 10px 20px;
-            border-radius: 40px;
-            color: #2d2418;
+            font-size: 10px;
+            padding: 10px 18px;
+            border-radius: 60px;
+            color: #2b2118;
             box-shadow: 0 5px 0 #b46f2a;
             cursor: pointer;
             transition: 0.05s linear;
             font-weight: bold;
         }
 
-        .pixel-btn:active {
+        .botonPixel:active {
             transform: translateY(3px);
             box-shadow: 0 2px 0 #b46f2a;
         }
 
-        .btn-primary {
+        .botonPrincipal {
             background: #6fcf97;
             box-shadow: 0 5px 0 #2c6e4f;
             color: #1e3a2f;
         }
 
-        .btn-danger {
+        .botonPeligro {
             background: #e67e5c;
             box-shadow: 0 5px 0 #a33f22;
             color: white;
         }
 
-        .info-bar {
+        .info {
             display: flex;
             justify-content: space-between;
             margin-bottom: 14px;
-            padding: 0 8px;
+            padding: 0 10px;
         }
 
         .badge {
-            background: #2c2b26;
-            color: #ffe484;
-            padding: 6px 14px;
+            background: #262421;
+            color: #ffdf8c;
+            padding: 6px 16px;
             border-radius: 40px;
             font-size: 9px;
             font-family: 'Press Start 2P', monospace;
-            box-shadow: inset 0 0 0 1px #ffdf8c, 0 2px 0 #00000055;
+            box-shadow: inset 0 0 0 1px #ffdf8c, 0 2px 0 #00000066;
         }
 
-        /* Overlay de SORPRESA con estilo épico */
-        .surprise-modal {
+        /* Overlay sorpresa */
+        .sorpresaModal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, #ff2266, #220000);
+            background: radial-gradient(circle, #ff2266, #2a0000);
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
             z-index: 2000;
             font-family: 'Press Start 2P', monospace;
-            animation: flicker 0.2s infinite;
+            animation: palpitar 0.2s infinite alternate;
         }
 
-        .surprise-text {
-            font-size: 56px;
+        .sorpresaTexto {
+            font-size: 54px;
             color: #fff44f;
-            text-shadow: 8px 8px 0 #d40000;
-            letter-spacing: 8px;
-            animation: bounce 0.4s ease infinite alternate;
+            text-shadow: 8px 8px 0 #b3002d;
+            letter-spacing: 6px;
+            animation: saltar 0.3s ease infinite alternate;
         }
 
-        @keyframes bounce {
+        @keyframes saltar {
             from { transform: scale(1); }
-            to { transform: scale(1.1); text-shadow: 12px 12px 0 #a10000; }
+            to { transform: scale(1.08); text-shadow: 12px 12px 0 #8a0022; }
         }
 
-        @keyframes flicker {
-            0% { opacity: 0.98; }
-            100% { opacity: 1; background: radial-gradient(circle, #ff3366, #330000); }
+        @keyframes palpitar {
+            0% { opacity: 0.96; background: radial-gradient(circle, #ff3366, #2a0000);}
+            100% { opacity: 1; background: radial-gradient(circle, #ff4d7a, #3f0000);}
         }
 
-        .close-surprise {
+        .cerrarSorpresa {
             background: #ffde9c;
             border: none;
-            padding: 12px 28px;
-            font-size: 14px;
-            margin-top: 40px;
+            padding: 12px 30px;
+            font-size: 13px;
+            margin-top: 50px;
             border-radius: 60px;
             font-family: 'Press Start 2P', monospace;
             font-weight: bold;
             cursor: pointer;
+            box-shadow: 0 6px 0 #a56b2f;
         }
     </style>
 </head>
 <body>
-<div class="gameboy">
-    <div class="info-bar">
-        <div class="badge" id="dayBadge">📅 DÍA 1</div>
-        <div class="badge" id="giftBadge">🎁 REGALO: ??</div>
+<div class="consola">
+    <div class="info">
+        <div class="badge" id="diaBadge">📅 DÍA 1</div>
+        <div class="badge" id="regaloBadge">🎁 REGALO: CONTROL</div>
     </div>
-    <div class="screen">
-        <canvas id="gameCanvas" width="720" height="400"></canvas>
+    <div class="pantalla">
+        <canvas id="gameCanvas" width="800" height="450"></canvas>
     </div>
-    <div class="dialog-panel" id="dialogBox">
-        💬 ¡Bienvenido, aventurero! Toque los objetos brillantes ✨
+    <div class="cajaDialogo" id="dialogo">
+        💬 ¡Bienvenidx! Toca los objetos brillantes ✨
     </div>
-    <div class="button-bar">
-        <button class="pixel-btn btn-danger" id="resetBtn">🔁 REINICIAR</button>
-        <button class="pixel-btn btn-primary" id="nextDayBtn">🌙 PASAR DÍA / REGALO</button>
+    <div class="barraBotones">
+        <button class="botonPixel botonPeligro" id="resetBtn">🔁 REINICIAR</button>
+        <button class="botonPixel botonPrincipal" id="siguienteDiaBtn">🌙 PASAR DÍA / REGALO</button>
     </div>
 </div>
 
 <script>
     // ============================================================
-    //  🎮 JUEGO CON ESTÉTICA POKÉMON MEJORADA 💖
+    // 🎮 AVENTURA POKÉMON CON ESTILO AUTÉNTICO
     // ============================================================
-    
-    // -------- CONFIGURACIÓN DE RECUERDOS (cámbialos con amor) --------
-    const CASA_RECUERDOS = [
-        { nombre: "📖 Librero", x: 100, y: 200, w: 70, h: 90, 
-          mensaje: "📜 *Poema encontrado*:\n“Tus manos dibujan el sol en mi espalda, cada día es un verso nuevo.”\n🖼️ [Foto: ustedes leyendo en el sofá]" },
-        { nombre: "🪴 Planta del amor", x: 580, y: 250, w: 50, h: 70,
-          mensaje: "🌱 Esta planta creció con nuestras conversaciones.\n🎵 *Poema*: “Raíces como las nuestras, que florecen incluso en invierno.”\n📸 Foto: regando juntos" },
-        { nombre: "🖼️ Cuadro de la risa", x: 380, y: 140, w: 80, h: 80,
-          mensaje: "🖼️ ¡Nuestra primera foto juntos! Qué nervios.\n💌 “Ese día supe que quería contagiarme de tu risa para siempre.”" }
+
+    // ----- RECUERDOS Y POEMAS (¡personaliza aquí!) -----
+    const OBJETOS_CASA = [
+        { nombre: "📚 Estante mágico", x: 110, y: 210, ancho: 75, alto: 95,
+          texto: "📜 *Poema oculto*:\n“En cada página de tus ojos, encuentro un mundo nuevo.”\n🖼️ [Foto: ustedes leyendo en la cama]" },
+        { nombre: "🌿 Planta del cariño", x: 620, y: 240, ancho: 55, alto: 80,
+          texto: "🌱 *Ha crecido con nosotros*:\n“Como esta planta, nuestro amor echa raíces profundas.”\n📸 Foto: regando juntos un domingo" },
+        { nombre: "🖼️ Cuadro de la risa", x: 380, y: 140, ancho: 85, alto: 85,
+          texto: "🖼️ *Nuestra primera foto oficial*\n“Ese día supe que quería robarte todas las sonrisas.”\n💌 Te quiero." }
     ];
 
-    const CALLE_RECUERDOS = [
-        { nombre: "🌳 Árbol amigo", x: 130, y: 190, w: 70, h: 100,
-          mensaje: "🍃 *Poema del árbol*:\n“Bajo tu sombra hicimos promesas de madrugada, el viento las guardó para siempre.”\n📸 [Foto: sentados en la piedra con el árbol atrás]" },
-        { nombre: "💡 Farol de espera", x: 520, y: 170, w: 45, h: 100,
-          mensaje: "🏮 Aquí te esperaba cada tarde, con una flor en la mano.\n✨ “Tus pasos siempre fueron mi melodía favorita.”" }
+    const OBJETOS_CALLE = [
+        { nombre: "🌳 Árbol amigo", x: 120, y: 190, ancho: 80, alto: 110,
+          texto: "🍃 *Poema del árbol*:\n“Bajo tu sombra contamos secretos, el viento los guardó para siempre.”\n📸 [Foto: sentados en la piedra mirando el atardecer]" },
+        { nombre: "💡 Farol de espera", x: 560, y: 170, ancho: 50, alto: 110,
+          texto: "🏮 *Cada tarde te esperaba aquí*\n“Tus pasos siempre fueron mi canción favorita.”\n✨ Poema: 'Farol testigo de dos almas'." }
     ];
 
-    const REGALO_PIEDRA = "🎁 ¡Llegaste a nuestra PIEDRA MÁGICA! 🎁\n\n⭐ Reclama tu SEGUNDO REGALO ⭐\n¡Una BEYBLADE + la funda para tu tablet!\n\n💝 Te mereces todo esto y más. ¡Te quiero mucho! 💝";
+    const REGALO_PIEDRA = "🎁 ¡PIEDRA DEL RECUERDO! 🎁\n\n⭐ ¡Reclama tu SEGUNDO REGALO! ⭐\n✨ Una BEYBLADE y la funda para tu tablet ✨\n\n💝 Eres mi mejor aventura. ¡Te quiero! 💝";
 
-    // -------- ESTADO DEL JUEGO --------
-    let gameState = {
-        dia: 1,               // 1: cama, 2: casa, 3: calle, 4: final
-        sorpresaHecha: false,
-        casaVisitados: 0,
-        piedraRegaloTomado: false,
-        calleVisitados: 0
+    // ---- Estado del juego ----
+    let estado = {
+        dia: 1,                // 1:cama, 2:casa, 3:calle, 4:final
+        sorpresaLista: false,
+        vistosCasa: 0,
+        piedraTomada: false,
+        vistosCalle: 0
     };
 
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
-    const dialogDiv = document.getElementById('dialogBox');
-    const dayBadge = document.getElementById('dayBadge');
-    const giftBadge = document.getElementById('giftBadge');
+    const dialogDiv = document.getElementById('dialogo');
+    const diaBadge = document.getElementById('diaBadge');
+    const regaloBadge = document.getElementById('regaloBadge');
 
-    // Guardar/cargar con localStorage
-    function guardarPartida() {
-        localStorage.setItem('pokemonAmor', JSON.stringify(gameState));
+    // Marcar visitados
+    OBJETOS_CASA.forEach(obj => obj.visto = false);
+    OBJETOS_CALLE.forEach(obj => obj.visto = false);
+
+    // Guardar y cargar
+    function guardar() {
+        localStorage.setItem('aventuraPokemonAmor', JSON.stringify({
+            dia: estado.dia,
+            sorpresaLista: estado.sorpresaLista,
+            vistosCasa: estado.vistosCasa,
+            piedraTomada: estado.piedraTomada,
+            vistosCalle: estado.vistosCalle
+        }));
     }
 
-    function cargarPartida() {
-        const data = localStorage.getItem('pokemonAmor');
+    function cargar() {
+        const data = localStorage.getItem('aventuraPokemonAmor');
         if (data) {
-            try {
-                const loaded = JSON.parse(data);
-                gameState = loaded;
-                // Sincronizar estados visitados de objetos
-                CASA_RECUERDOS.forEach((item, idx) => item.visitado = idx < gameState.casaVisitados);
-                CALLE_RECUERDOS.forEach((item, idx) => item.visitado = idx < gameState.calleVisitados);
-                if (gameState.dia > 3) gameState.dia = 4;
-            } catch(e) {}
+            const cargado = JSON.parse(data);
+            estado = cargado;
+            // sincronizar objetos vistos
+            for (let i = 0; i < OBJETOS_CASA.length && i < estado.vistosCasa; i++) OBJETOS_CASA[i].visto = true;
+            for (let i = 0; i < OBJETOS_CALLE.length && i < estado.vistosCalle; i++) OBJETOS_CALLE[i].visto = true;
+            if (estado.dia > 3) estado.dia = 4;
         } else {
-            resetInterno(false);
+            reiniciarInterno(false);
         }
         actualizarUI();
     }
 
-    function resetInterno(guardar = true) {
-        gameState = {
+    function reiniciarInterno(guardarCambio = true) {
+        estado = {
             dia: 1,
-            sorpresaHecha: false,
-            casaVisitados: 0,
-            piedraRegaloTomado: false,
-            calleVisitados: 0
+            sorpresaLista: false,
+            vistosCasa: 0,
+            piedraTomada: false,
+            vistosCalle: 0
         };
-        CASA_RECUERDOS.forEach(i => i.visitado = false);
-        CALLE_RECUERDOS.forEach(i => i.visitado = false);
-        if (guardar) guardarPartida();
+        OBJETOS_CASA.forEach(o => o.visto = false);
+        OBJETOS_CALLE.forEach(o => o.visto = false);
+        if (guardarCambio) guardar();
         actualizarUI();
-        dibujarEscena();
     }
 
     function actualizarUI() {
-        if (gameState.dia === 1) dayBadge.innerText = "📅 DÍA 1 · SORPRESA";
-        else if (gameState.dia === 2) dayBadge.innerText = "📅 DÍA 2 · EXPLORA CASA";
-        else if (gameState.dia === 3) dayBadge.innerText = "📅 DÍA 3 · CALLE Y ESQUINA";
-        else dayBadge.innerText = "🏁 AVENTURA COMPLETA";
+        if (estado.dia === 1) diaBadge.innerText = "📅 DÍA 1 · SORPRESA";
+        else if (estado.dia === 2) diaBadge.innerText = "📅 DÍA 2 · EXPLORA CASA";
+        else if (estado.dia === 3) diaBadge.innerText = "📅 DÍA 3 · CALLE Y ESQUINA";
+        else diaBadge.innerText = "🏁 AVENTURA COMPLETA";
 
-        if (gameState.dia === 1 && !gameState.sorpresaHecha) giftBadge.innerText = "🎁 ¡CONTROL SORPRESA!";
-        else if (gameState.dia === 2) giftBadge.innerText = `🏠 Recuerdos: ${gameState.casaVisitados}/${CASA_RECUERDOS.length}`;
-        else if (gameState.dia === 3) giftBadge.innerText = gameState.piedraRegaloTomado ? "🎁 2º REGALO OBTENIDO" : "⛰️ Toca la piedra";
-        else giftBadge.innerText = "✨ ¡Misión cumplida! ✨";
-        
+        if (estado.dia === 1 && !estado.sorpresaLista) regaloBadge.innerText = "🎁 ¡CONTROL SORPRESA!";
+        else if (estado.dia === 2) regaloBadge.innerText = `🏠 Recuerdos: ${estado.vistosCasa}/${OBJETOS_CASA.length}`;
+        else if (estado.dia === 3) regaloBadge.innerText = estado.piedraTomada ? "🎁 2º REGALO OBTENIDO" : "⛰️ Toca la piedra";
+        else regaloBadge.innerText = "✨ ¡Misión cumplida! ✨";
+
         dibujarEscena();
-        // Mostrar/ocultar botón sorpresa
         manejarBotonSorpresa();
     }
 
     function manejarBotonSorpresa() {
-        let btnExistente = document.getElementById('sorpresaBtn');
-        if (gameState.dia === 1 && !gameState.sorpresaHecha) {
-            if (!btnExistente) {
-                const boton = document.createElement('button');
-                boton.id = 'sorpresaBtn';
-                boton.className = 'pixel-btn';
-                boton.style.background = "#ff8c5a";
-                boton.style.boxShadow = "0 5px 0 #aa4422";
-                boton.innerHTML = "🎮 ¡NO TENGO UN CONTROL!";
-                boton.onclick = mostrarSorpresaControl;
-                const barra = document.querySelector('.button-bar');
-                barra.insertBefore(boton, document.getElementById('nextDayBtn'));
+        let btn = document.getElementById('btnSorpresa');
+        if (estado.dia === 1 && !estado.sorpresaLista) {
+            if (!btn) {
+                const nuevoBtn = document.createElement('button');
+                nuevoBtn.id = 'btnSorpresa';
+                nuevoBtn.className = 'botonPixel';
+                nuevoBtn.style.background = "#ff8c5a";
+                nuevoBtn.style.boxShadow = "0 5px 0 #aa4422";
+                nuevoBtn.innerHTML = "🎮 ¡NO TENGO UN CONTROL!";
+                nuevoBtn.onclick = mostrarSorpresa;
+                const barra = document.querySelector('.barraBotones');
+                barra.insertBefore(nuevoBtn, document.getElementById('siguienteDiaBtn'));
             }
         } else {
-            if (btnExistente) btnExistente.remove();
+            if (btn) btn.remove();
         }
     }
 
-    function mostrarSorpresaControl() {
+    function mostrarSorpresa() {
         const overlay = document.createElement('div');
-        overlay.className = 'surprise-modal';
+        overlay.className = 'sorpresaModal';
         overlay.innerHTML = `
-            <div class="surprise-text">¡SORPRESA!</div>
-            <div style="color:#ffdd99; margin-top:20px;">✨ ¡Mira hacia un lado, amor! ✨</div>
-            <div style="color:#fff; margin-top:10px;">🎁 ¡Aquí está tu controlcito 8bitdo! 🎁</div>
-            <button class="close-surprise" id="cerrarSorpresa">Continuar aventura ➡️</button>
+            <div class="sorpresaTexto">¡SORPRESA!</div>
+            <div style="color:#ffe0a3; margin-top:20px;">✨ ¡Mira a tu lado, amor! ✨</div>
+            <div style="color:#ffffff; margin-top:10px;">🎁 ¡Aquí está tu controlcito 8bitdo! 🎁</div>
+            <button class="cerrarSorpresa" id="cerrarSorpresaBtn">Continuar aventura ➡️</button>
         `;
         document.body.appendChild(overlay);
-        document.getElementById('cerrarSorpresa').onclick = () => {
+        document.getElementById('cerrarSorpresaBtn').onclick = () => {
             overlay.remove();
-            gameState.sorpresaHecha = true;
-            guardarPartida();
-            dialogDiv.innerHTML = "💖 ¡Control entregado! Ahora puedes terminar el día y mañana explorar la casa llena de recuerdos. 💖";
+            estado.sorpresaLista = true;
+            guardar();
+            dialogDiv.innerHTML = "💖 ¡Control entregado! Ahora puedes terminar el día para explorar la casa llena de recuerdos. 💖";
             actualizarUI();
         };
     }
 
-    // -------------------- DIBUJOS ESTILO POKÉMON MEJORADO --------------------
+    // ========== DIBUJO CON ESTILO PIXEL ART CUIDADO ==========
     function dibujarEscena() {
-        ctx.clearRect(0, 0, 720, 400);
+        ctx.clearRect(0, 0, 800, 450);
         
-        if (gameState.dia === 1 && !gameState.sorpresaHecha) {
-            dibujarHabitacionCama();
-            dibujarPersonaje(360, 310, "dormido");
-            dialogDiv.innerHTML = "💤 Estás en la cama... Aparece un mensaje:\n⚠️ “Para una mejor experiencia, conecta tu control” ⚠️";
+        if (estado.dia === 1 && !estado.sorpresaLista) {
+            dibujarHabitacion();
+            dibujarPersonaje(400, 350, "dormido");
+            dialogDiv.innerHTML = "💤 Estás en tu cama... Aparece un mensaje:\n⚠️ “Para una mejor experiencia, conecta tu control” ⚠️";
             return;
         }
-        if (gameState.dia === 2) {
+        if (estado.dia === 2) {
             dibujarInteriorCasa();
-            dibujarPersonaje(360, 330, "normal");
-            CASA_RECUERDOS.forEach(item => {
-                ctx.fillStyle = "rgba(255, 215, 120, 0.5)";
-                ctx.fillRect(item.x, item.y, item.w, item.h);
-                ctx.strokeStyle = "#f7d44a";
-                ctx.lineWidth = 2.5;
-                ctx.strokeRect(item.x, item.y, item.w, item.h);
-                ctx.fillStyle = "#2f2e2a";
+            dibujarPersonaje(400, 370, "normal");
+            OBJETOS_CASA.forEach(obj => {
+                ctx.save();
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = "rgba(255, 220, 100, 0.5)";
+                ctx.beginPath();
+                ctx.roundRect(obj.x, obj.y, obj.ancho, obj.alto, 12);
+                ctx.fill();
+                ctx.strokeStyle = "#ffcf4a";
+                ctx.lineWidth = 2;
+                ctx.strokeRect(obj.x+2, obj.y+2, obj.ancho-4, obj.alto-4);
+                ctx.fillStyle = "#2d2b1f";
                 ctx.font = "9px 'Press Start 2P'";
-                ctx.fillText(item.nombre, item.x+5, item.y-6);
+                ctx.fillText(obj.nombre, obj.x+8, obj.y-4);
+                ctx.restore();
             });
             return;
         }
-        if (gameState.dia === 3) {
-            dibujarCalleYEsquina();
-            dibujarPersonaje(360, 330, "caminando");
-            CALLE_RECUERDOS.forEach(item => {
-                ctx.fillStyle = "rgba(80, 180, 255, 0.4)";
-                ctx.fillRect(item.x, item.y, item.w, item.h);
-                ctx.strokeStyle = "#bbe2ff";
-                ctx.strokeRect(item.x, item.y, item.w, item.h);
-                ctx.fillStyle = "#2c2c1e";
+        if (estado.dia === 3) {
+            dibujarCalle();
+            dibujarPersonaje(400, 370, "caminando");
+            OBJETOS_CALLE.forEach(obj => {
+                ctx.fillStyle = "rgba(100, 200, 255, 0.45)";
+                ctx.beginPath();
+                ctx.roundRect(obj.x, obj.y, obj.ancho, obj.alto, 12);
+                ctx.fill();
+                ctx.strokeStyle = "#8cd0ff";
+                ctx.strokeRect(obj.x+1, obj.y+1, obj.ancho-2, obj.alto-2);
+                ctx.fillStyle = "#1f2f1c";
                 ctx.font = "8px 'Press Start 2P'";
-                ctx.fillText(item.nombre, item.x+4, item.y-5);
+                ctx.fillText(obj.nombre, obj.x+5, obj.y-5);
             });
             // Piedra especial
-            if (!gameState.piedraRegaloTomado) {
-                ctx.fillStyle = "#ffb347";
+            if (!estado.piedraTomada) {
+                ctx.fillStyle = "#ffaa66";
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = "#ff8800";
                 ctx.beginPath();
-                ctx.ellipse(635, 335, 38, 22, 0, 0, Math.PI*2);
+                ctx.ellipse(700, 380, 45, 28, 0, 0, Math.PI*2);
                 ctx.fill();
-                ctx.fillStyle = "#ffffff";
-                ctx.shadowBlur = 0;
+                ctx.fillStyle = "#fffbe3";
                 ctx.font = "10px 'Press Start 2P'";
-                ctx.fillText("⭐ PIEDRA DEL RECUERDO ⭐", 570, 310);
-                ctx.fillStyle = "#ffefb0";
+                ctx.fillText("⭐ PIEDRA DEL REGALO ⭐", 635, 360);
                 ctx.font = "8px monospace";
-                ctx.fillText("✨ Haz click ✨", 615, 355);
+                ctx.fillStyle = "#ffeeaa";
+                ctx.fillText("✨ Haz click ✨", 685, 395);
+                ctx.shadowBlur = 0;
             } else {
-                ctx.fillStyle = "#9b7e64";
+                ctx.fillStyle = "#9c8468";
                 ctx.beginPath();
-                ctx.ellipse(635, 335, 35, 18, 0, 0, Math.PI*2);
+                ctx.ellipse(700, 380, 42, 24, 0, 0, Math.PI*2);
                 ctx.fill();
             }
             return;
         }
-        // final
         dibujarFinal();
     }
 
-    function dibujarHabitacionCama() {
-        ctx.fillStyle = "#3c2b1f";
-        ctx.fillRect(0, 0, 720, 400);
-        ctx.fillStyle = "#ad8b67";
-        ctx.fillRect(0, 280, 720, 120);
-        // cama detallada
-        ctx.fillStyle = "#5e4233";
-        ctx.fillRect(100, 200, 200, 100);
-        ctx.fillStyle = "#c99e6f";
-        ctx.fillRect(110, 185, 180, 25);
-        ctx.fillStyle = "#e5caa4";
-        ctx.fillRect(120, 215, 80, 30);
-        // ventana
-        ctx.fillStyle = "#87CEEB";
-        ctx.fillRect(550, 80, 100, 100);
-        ctx.fillStyle = "#d4b68a";
-        ctx.fillRect(560, 90, 80, 80);
-        ctx.fillStyle = "#fbe8c8";
-        ctx.font = "12px 'Press Start 2P'";
-        ctx.fillText("🛏️", 140, 260);
+    function dibujarHabitacion() {
+        // Paredes y suelo
+        ctx.fillStyle = "#4d3522";
+        ctx.fillRect(0, 0, 800, 450);
+        ctx.fillStyle = "#b58c5d";
+        ctx.fillRect(0, 310, 800, 140);
+        // Cama detallada
+        ctx.fillStyle = "#6d4c34";
+        ctx.shadowBlur = 6;
+        ctx.fillRect(140, 220, 240, 110);
+        ctx.fillStyle = "#dbb47a";
+        ctx.fillRect(160, 200, 200, 30);
+        ctx.fillStyle = "#f3d2a2";
+        ctx.fillRect(180, 235, 100, 40);
+        ctx.fillStyle = "#a17442";
+        ctx.fillRect(70, 370, 90, 50);
+        // Ventana con vista
+        ctx.fillStyle = "#aacfcf";
+        ctx.fillRect(620, 70, 120, 120);
+        ctx.fillStyle = "#e9f2b6";
+        ctx.fillRect(635, 85, 90, 90);
+        ctx.fillStyle = "#52381f";
+        for(let i=0;i<3;i++) ctx.fillRect(635 + i*30, 85, 5, 90);
+        ctx.fillStyle = "#ffe1a0";
+        ctx.font = "14px 'Press Start 2P'";
+        ctx.fillText("🛌", 220, 280);
     }
 
     function dibujarInteriorCasa() {
-        ctx.fillStyle = "#dfcca6";
-        ctx.fillRect(0, 0, 720, 400);
-        ctx.fillStyle = "#bb9b6e";
-        ctx.fillRect(0, 310, 720, 90);
-        // muebles simpáticos
-        ctx.fillStyle = "#cb9e6b";
-        ctx.fillRect(20, 210, 100, 120);
-        ctx.fillStyle = "#9cb068";
-        ctx.fillRect(620, 230, 80, 100);
-        ctx.fillStyle = "#d6b576";
-        ctx.fillRect(280, 260, 130, 70);
-        // cuadros y decoración
-        ctx.fillStyle = "#f5e3c1";
-        ctx.fillRect(460, 100, 80, 60);
-        ctx.fillStyle = "#00000033";
-        ctx.fillRect(475, 115, 50, 30);
+        ctx.fillStyle = "#e9ddb0";
+        ctx.fillRect(0, 0, 800, 450);
+        ctx.fillStyle = "#c5a16e";
+        ctx.fillRect(0, 330, 800, 120);
+        ctx.fillStyle = "#b87c4f";
+        ctx.fillRect(0, 380, 800, 15);
+        // muebles redondeados
+        ctx.fillStyle = "#c8a27b";
+        ctx.beginPath();
+        ctx.roundRect(30, 200, 110, 140, 20);
+        ctx.fill();
+        ctx.fillStyle = "#e9c48b";
+        ctx.beginPath();
+        ctx.roundRect(660, 220, 100, 130, 18);
+        ctx.fill();
+        ctx.fillStyle = "#dbb067";
+        ctx.beginPath();
+        ctx.roundRect(330, 270, 140, 70, 20);
+        ctx.fill();
+        // cuadro
+        ctx.fillStyle = "#b3d9b0";
+        ctx.fillRect(500, 90, 80, 70);
+        ctx.fillStyle = "#74613a";
+        ctx.fillRect(520, 110, 40, 30);
         ctx.fillStyle = "#f3cf7a";
-        ctx.font = "16px monospace";
-        ctx.fillText("🏡 Hogar", 330, 60);
+        ctx.font = "14px monospace";
+        ctx.fillText("🏡 Hogar", 370, 70);
     }
 
-    function dibujarCalleYEsquina() {
-        ctx.fillStyle = "#6f9e4f";
-        ctx.fillRect(0, 0, 720, 400);
-        ctx.fillStyle = "#c9ae7a";
-        ctx.fillRect(0, 310, 720, 40);
-        ctx.fillStyle = "#4e6b2f";
-        for(let i=0;i<6;i++) ctx.fillRect(40+i*110, 220, 25, 70);
-        ctx.fillStyle = "#e4c27a";
+    function dibujarCalle() {
+        ctx.fillStyle = "#83b35f";
+        ctx.fillRect(0, 0, 800, 450);
+        ctx.fillStyle = "#dabb84";
+        ctx.fillRect(0, 340, 800, 50);
+        ctx.fillStyle = "#5e823b";
+        for(let i=0; i<6; i++) ctx.fillRect(60+i*120, 230, 30, 90);
+        ctx.fillStyle = "#e9cf9a";
         ctx.beginPath();
-        ctx.ellipse(635, 335, 35, 18, 0, 0, Math.PI*2);
+        ctx.ellipse(700, 380, 45, 28, 0, 0, Math.PI*2);
         ctx.fill();
-        ctx.fillStyle = "#ffffffb3";
+        ctx.fillStyle = "#fbeccd";
         ctx.font = "9px 'Press Start 2P'";
-        ctx.fillText("🌇 Nuestra esquina", 520, 290);
+        ctx.fillText("🌇 Nuestra esquina", 580, 310);
     }
 
     function dibujarFinal() {
-        ctx.fillStyle = "#14211f";
-        ctx.fillRect(0,0,720,400);
-        ctx.fillStyle = "#ffd966";
+        ctx.fillStyle = "#1e2a2e";
+        ctx.fillRect(0, 0, 800, 450);
+        ctx.fillStyle = "#ffdf8c";
         ctx.font = "18px 'Press Start 2P'";
-        ctx.fillText("🌟 ¡FELICIDADES! 🌟", 210, 180);
-        ctx.fillStyle = "#f0e6a0";
-        ctx.font = "12px monospace";
-        ctx.fillText("Has recibido todos los regalos", 210, 250);
-        ctx.fillText("Te amo más que a un Pokémon shiny", 190, 310);
+        ctx.fillText("🌟 ¡HAS GANADO! 🌟", 240, 190);
+        ctx.fillStyle = "#e1f0c4";
+        ctx.font = "11px monospace";
+        ctx.fillText("Todos los regalos entregados con amor", 200, 270);
+        ctx.fillText("Te quiero más que a un Pokémon shiny", 210, 330);
     }
 
     function dibujarPersonaje(x, y, anim) {
-        // Personaje adorable estilo chico pixel
-        ctx.fillStyle = "#fdcc8a";
-        ctx.fillRect(x-12, y-28, 24, 30);
-        ctx.fillStyle = "#5e3a1f";
-        ctx.fillRect(x-6, y-39, 12, 12);
-        ctx.fillStyle = "#fff2df";
-        ctx.fillRect(x-8, y-22, 7, 7);
-        ctx.fillRect(x+1, y-22, 7, 7);
-        ctx.fillStyle = "#1e2f3a";
-        ctx.fillRect(x-7, y-20, 4, 4);
-        ctx.fillRect(x+2, y-20, 4, 4);
-        ctx.fillStyle = "#d9692e";
-        ctx.fillRect(x-3, y-13, 6, 5);
-        // gorra o moño
+        ctx.save();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = "#fed8a8";
+        ctx.fillRect(x-14, y-32, 28, 35);
+        ctx.fillStyle = "#4d2f14";
+        ctx.fillRect(x-8, y-44, 16, 14);
+        ctx.fillStyle = "#fff5e0";
+        ctx.fillRect(x-10, y-26, 9, 9);
+        ctx.fillRect(x+1, y-26, 9, 9);
+        ctx.fillStyle = "#1a2d32";
+        ctx.fillRect(x-9, y-24, 5, 5);
+        ctx.fillRect(x+4, y-24, 5, 5);
+        ctx.fillStyle = "#d95b2b";
+        ctx.fillRect(x-4, y-16, 8, 6);
+        // gorra
         ctx.fillStyle = "#c53a1f";
-        ctx.fillRect(x-14, y-42, 28, 9);
+        ctx.fillRect(x-16, y-48, 32, 11);
         if (anim === "caminando") {
             ctx.fillStyle = "#ffffff";
-            ctx.fillRect(x+8, y-20, 5, 5);
+            ctx.fillRect(x+10, y-25, 6, 6);
         }
+        ctx.restore();
     }
 
-    // -------------------- INTERACCIONES --------------------
-    function manejarClickCanvas(e) {
+    // Helper para roundRect
+    if (!CanvasRenderingContext2D.prototype.roundRect) {
+        CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+            if (w < 2 * r) r = w / 2;
+            if (h < 2 * r) r = h / 2;
+            this.moveTo(x+r, y);
+            this.lineTo(x+w-r, y);
+            this.quadraticCurveTo(x+w, y, x+w, y+r);
+            this.lineTo(x+w, y+h-r);
+            this.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+            this.lineTo(x+r, y+h);
+            this.quadraticCurveTo(x, y+h, x, y+h-r);
+            this.lineTo(x, y+r);
+            this.quadraticCurveTo(x, y, x+r, y);
+            return this;
+        };
+    }
+
+    // INTERACCIONES
+    function manejarClick(e) {
         const rect = canvas.getBoundingClientRect();
         const scaleX = canvas.width / rect.width;
         const scaleY = canvas.height / rect.height;
         const clickX = (e.clientX - rect.left) * scaleX;
         const clickY = (e.clientY - rect.top) * scaleY;
-        
-        if (gameState.dia === 2) {
-            for (let item of CASA_RECUERDOS) {
-                if (clickX > item.x && clickX < item.x+item.w && clickY > item.y && clickY < item.y+item.h) {
-                    if (!item.visitado) {
-                        item.visitado = true;
-                        gameState.casaVisitados++;
-                        guardarPartida();
-                        dialogDiv.innerHTML = item.mensaje.replace(/\n/g, '<br>');
+
+        if (estado.dia === 2) {
+            for (let obj of OBJETOS_CASA) {
+                if (clickX > obj.x && clickX < obj.x+obj.ancho && clickY > obj.y && clickY < obj.y+obj.alto) {
+                    if (!obj.visto) {
+                        obj.visto = true;
+                        estado.vistosCasa++;
+                        guardar();
+                        dialogDiv.innerHTML = obj.texto.replace(/\n/g, '<br>');
                         actualizarUI();
                     } else {
                         dialogDiv.innerHTML = "💭 Ya reviviste ese recuerdo. Sigue explorando 💭";
@@ -505,30 +550,28 @@
                     return;
                 }
             }
-            dialogDiv.innerHTML = "🔍 Haz click en los objetos amarillos (librero, planta o cuadro) para descubrir poemas y fotos.";
+            dialogDiv.innerHTML = "🔍 Toca los objetos brillantes (estante, planta, cuadro) para encontrar poemas y fotos.";
             return;
         }
-        
-        if (gameState.dia === 3) {
-            // interactuar con elementos de calle
-            for (let calle of CALLE_RECUERDOS) {
-                if (clickX > calle.x && clickX < calle.x+calle.w && clickY > calle.y && clickY < calle.y+calle.h) {
-                    if (!calle.visitado) {
-                        calle.visitado = true;
-                        gameState.calleVisitados++;
-                        guardarPartida();
-                        dialogDiv.innerHTML = calle.mensaje.replace(/\n/g, '<br>');
+
+        if (estado.dia === 3) {
+            for (let obj of OBJETOS_CALLE) {
+                if (clickX > obj.x && clickX < obj.x+obj.ancho && clickY > obj.y && clickY < obj.y+obj.alto) {
+                    if (!obj.visto) {
+                        obj.visto = true;
+                        estado.vistosCalle++;
+                        guardar();
+                        dialogDiv.innerHTML = obj.texto.replace(/\n/g, '<br>');
                         actualizarUI();
                     } else {
-                        dialogDiv.innerHTML = "🌿 Ese recuerdo ya lo atesoras. Busca la piedra para tu regalo.";
+                        dialogDiv.innerHTML = "🌿 Ese recuerdo ya lo guardas. Busca la piedra para tu regalo.";
                     }
                     return;
                 }
             }
-            // Piedra de regalo
-            if (!gameState.piedraRegaloTomado && clickX > 590 && clickX < 680 && clickY > 310 && clickY < 370) {
-                gameState.piedraRegaloTomado = true;
-                guardarPartida();
+            if (!estado.piedraTomada && clickX > 650 && clickX < 750 && clickY > 350 && clickY < 410) {
+                estado.piedraTomada = true;
+                guardar();
                 dialogDiv.innerHTML = REGALO_PIEDRA.replace(/\n/g, '<br>');
                 actualizarUI();
                 return;
@@ -538,49 +581,46 @@
     }
 
     function siguienteDia() {
-        if (gameState.dia === 1 && !gameState.sorpresaHecha) {
+        if (estado.dia === 1 && !estado.sorpresaLista) {
             dialogDiv.innerHTML = "❓ Primero recibe la sorpresa del control (botón rojo 'No tengo un control').";
             return;
         }
-        if (gameState.dia === 2 && gameState.casaVisitados < CASA_RECUERDOS.length) {
-            dialogDiv.innerHTML = `🏠 Aún faltan recuerdos por ver (${gameState.casaVisitados}/${CASA_RECUERDOS.length}). Encuentra todos los objetos brillantes en casa.`;
+        if (estado.dia === 2 && estado.vistosCasa < OBJETOS_CASA.length) {
+            dialogDiv.innerHTML = `🏠 Aún faltan recuerdos (${estado.vistosCasa}/${OBJETOS_CASA.length}). Encuentra todos los objetos brillantes.`;
             return;
         }
-        if (gameState.dia === 3 && !gameState.piedraRegaloTomado) {
-            dialogDiv.innerHTML = "⛰️ Debes reclamar el segundo regalo en la piedra de la esquina. ¡Haz click en ella!";
+        if (estado.dia === 3 && !estado.piedraTomada) {
+            dialogDiv.innerHTML = "⛰️ Debes reclamar el segundo regalo tocando la piedra brillante en la esquina.";
             return;
         }
-        
-        // Avanzar día
-        if (gameState.dia === 1 && gameState.sorpresaHecha) {
-            gameState.dia = 2;
-            dialogDiv.innerHTML = "🌅 ¡Nuevo día! Ahora explora la casa, toca los objetos para encontrar poemas y fotos. ❤️";
-            guardarPartida();
+
+        if (estado.dia === 1 && estado.sorpresaLista) {
+            estado.dia = 2;
+            dialogDiv.innerHTML = "🌅 ¡Nuevo día! Explora la casa y toca los objetos para encontrar poemas y fotos. ❤️";
+            guardar();
             actualizarUI();
             return;
         }
-        if (gameState.dia === 2 && gameState.casaVisitados >= CASA_RECUERDOS.length) {
-            gameState.dia = 3;
-            dialogDiv.innerHTML = "🚪 Sales de casa... Mañana el destino es la esquina donde solían sentarse. ¡No olvides reclamar tu segundo regalo!";
-            guardarPartida();
+        if (estado.dia === 2 && estado.vistosCasa >= OBJETOS_CASA.length) {
+            estado.dia = 3;
+            dialogDiv.innerHTML = "🚪 Sales de casa... Mañana te espera la esquina donde solían sentarse. ¡Reclama tu segundo regalo!";
+            guardar();
             actualizarUI();
             return;
         }
-        if (gameState.dia === 3 && gameState.piedraRegaloTomado) {
-            gameState.dia = 4;
-            dialogDiv.innerHTML = "🎉 ¡HAS COMPLETADO LA AVENTURA! 🎉\nRecibirás todos los regalos con mucho amor. ¡Te quiero infinito! 💖";
-            guardarPartida();
+        if (estado.dia === 3 && estado.piedraTomada) {
+            estado.dia = 4;
+            dialogDiv.innerHTML = "🎉 ¡AVENTURA COMPLETA! 🎉\nHas recibido todos los regalos. ¡Te quiero infinito! 💖";
+            guardar();
             actualizarUI();
         }
     }
 
-    // Eventos
-    canvas.addEventListener('click', manejarClickCanvas);
-    document.getElementById('nextDayBtn').addEventListener('click', siguienteDia);
-    document.getElementById('resetBtn').addEventListener('click', () => resetInterno(true));
+    canvas.addEventListener('click', manejarClick);
+    document.getElementById('siguienteDiaBtn').addEventListener('click', siguienteDia);
+    document.getElementById('resetBtn').addEventListener('click', () => reiniciarInterno(true));
     
-    cargarPartida();
-    dibujarEscena();
+    cargar();
 </script>
 </body>
 </html>
